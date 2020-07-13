@@ -43,7 +43,7 @@
             <div onclick="document.location.href = '{{route('showAllProjects')}}'" class="myNavbar">معرفی پروژه‌ها</div>
             <div onclick="document.location.href = '{{route('showAllServices')}}'" class="myNavbar">پروژه‌های خدماتی</div>
             <div onclick="document.location.href = '{{route('showAllProducts')}}'" class="myNavbar">معرفی محصولات</div>
-            <div class="myNavbar">پروفایل</div>
+            <div onclick="document.location.href = '{{route('profile')}}'" class="myNavbar">پروفایل</div>
         </div>
     </div>
 

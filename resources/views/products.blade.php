@@ -358,18 +358,19 @@
             position: absolute;
             top: 40px;
             z-index: 20;
-            background-color: #f15b47;
             background-size: 64%;
             background-repeat: no-repeat;
         }
         .projectsBanner {
             background-image: url("{{URL::asset('images/projectsBanner.png')}}");
+            background-color: #f15b47;
         }
         .servicesBanner {
             background-image: url("{{URL::asset('images/servicesBanner.png')}}");
         }
         .productsBanner {
             background-image: url("{{URL::asset('images/productsBanner.png')}}");
+            background-color: rgb(51, 163, 220);
         }
         .bannerText {
             font-size: 3em;
@@ -387,9 +388,9 @@
 
     <div class="banner">
         <div class="bannerGrayBox"></div>
-        <div class="bannerBorderBox bannerLightRedBox"></div>
-        <div class="bannerMainBox projectsBanner">
-            <div class="bannerText">انتخاب پروژه‌ها</div>
+        <div class="bannerBorderBox bannerLightBlueBox"></div>
+        <div class="bannerMainBox productsBanner">
+            <div class="bannerText">معرفی محصولات</div>
         </div>
     </div>
 

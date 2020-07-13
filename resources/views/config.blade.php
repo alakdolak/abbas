@@ -31,6 +31,11 @@
             </div>
 
             <div>
+                <label for="rev_change_rate">نرخ تبدیل سکه به ستاره (هر سکه برابر است با ... ستاره)</label>
+                <input id="rev_change_rate" value="{{$config->rev_change_rate}}" name="rev_change_rate" type="text">
+            </div>
+
+            <div>
                 <label for="initial_point">مقدار سکه اولیه دانش آموزان</label>
                 <input value="{{$config->initial_point}}" id="initial_point" name="initial_point" type="number">
             </div>

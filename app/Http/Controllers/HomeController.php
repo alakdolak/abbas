@@ -49,12 +49,12 @@ class HomeController extends Controller {
 
     public function profile() {
 
-        if(Auth::user()->level == getValueInfo('adminLevel') ||
-            Auth::user()->level == getValueInfo('operatorLevel')
-        )
-            return view('adminProfile');
+//        if(Auth::user()->level == getValueInfo('adminLevel') ||
+//            Auth::user()->level == getValueInfo('operatorLevel')
+//        )
+//            return view('adminProfile');
 
-        return view('profile');
+        return view('abbasProfile');
     }
 
     public function faq() {

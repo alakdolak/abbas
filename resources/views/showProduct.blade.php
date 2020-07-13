@@ -151,7 +151,7 @@
                                 <div class="c-product__seller-digiclub">
                                     <div class="c-product__engagement-rating"></div>
                                     <div>
-                                        <span>{{$product->price}}</span>
+                                        <span>{{$product->star}}</span>
                                         ستاره بعد از خرید کالا
                                     </div>
                                 </div>
@@ -176,9 +176,9 @@
                     <li>
                         <button id="add-to-favorite-button" class="btn-option btn-option--wishes"></button><span class="c-tooltip c-tooltip--left c-tooltip--short 	glyphicon glyphicon-heart-empty">افزودن به علاقه&zwnj;مندی</span>
                     </li>
-                    <li>
-                        <button id="add-to-bookmark-button" class="btn-option btn-option--wishes"></button><span class="c-tooltip c-tooltip--left c-tooltip--short glyphicon glyphicon-heart-empty">افزودن به نشان</span>
-                    </li>
+{{--                    <li>--}}
+{{--                        <button id="add-to-bookmark-button" class="btn-option btn-option--wishes"></button><span class="c-tooltip c-tooltip--left c-tooltip--short glyphicon glyphicon-heart-empty">افزودن به نشان</span>--}}
+{{--                    </li>--}}
                 </ul>
 
                 <div class="c-gallery__img">

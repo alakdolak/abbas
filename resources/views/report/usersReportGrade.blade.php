@@ -156,7 +156,8 @@
                             @endif
 
                             <button onclick="editMoney('{{$user->id}}', '{{$user->money}}', '{{$user->stars}}')" class="btn btn-info col-xs-6">ویرایش سکه/ستاره کاربر</button>
-                            <button onclick="document.location.href = '{{route('userBookmarks', ['uId' => $user->id])}}'" class="btn btn-info col-xs-6">اقلام مورد علاقه کاربر</button>
+{{--                            <button onclick="document.location.href = '{{route('userBookmarks', ['uId' => $user->id])}}'" class="btn btn-info col-xs-6">اقلام مورد علاقه کاربر</button>--}}
+
                             <button onclick="document.location.href = '{{route('userBuys', ['uId' => $user->id])}}'" class="btn btn-default col-xs-6">اقلام خریداری شده کاربر</button>
 
                         </td>

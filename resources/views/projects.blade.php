@@ -286,6 +286,14 @@
 
 @section("content")
 
+    <div class="banner">
+        <div class="bannerGrayBox"></div>
+        <div class="bannerBorderBox bannerLightRedBox"></div>
+        <div class="bannerMainBox projectsBanner">
+            <div class="bannerText">انتخاب پروژه‌ها</div>
+        </div>
+    </div>
+
     <center style="margin: 40px;">
         <button id="allTags" class="tagFilter" data-status="0" data-filter="-1">همه</button>
         @foreach($tags as $tag)

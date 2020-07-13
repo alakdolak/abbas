@@ -282,11 +282,81 @@
 
     </style>
 
+
+    <style>
+        .banner {
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+        .bannerGrayBox {
+            width: 83%;
+            height: 200px;
+            background-color: #f9f9f9;
+            position: absolute;
+            z-index: 1;
+        }
+        .bannerBorderBox {
+            width: 78%;
+            height: 210px;
+            position: absolute;
+            top: 30px;
+            z-index: 10;
+        }
+        .bannerLightRedBox {
+            background-color: lightcoral;
+        }
+        .bannerLightBlueBox {
+            background-color: lightblue;
+        }
+        .bannerLightGreenBox {
+            background-color: lightgreen;
+        }
+        .bannerMainBox {
+            width: 76%;
+            height: 220px;
+            position: absolute;
+            top: 40px;
+            z-index: 20;
+            background-size: 64%;
+            background-repeat: no-repeat;
+        }
+        .projectsBanner {
+            background-image: url("{{URL::asset('images/projectsBanner.png')}}");
+            background-color: #f15b47;
+        }
+        .servicesBanner {
+            background-image: url("{{URL::asset('images/servicesBanner.png')}}");
+            background-color: rgb(155, 193, 60);
+        }
+        .productsBanner {
+            background-image: url("{{URL::asset('images/productsBanner.png')}}");
+            background-color: rgb(51, 163, 220);
+        }
+        .bannerText {
+            font-size: 3em;
+            font-weight: 700;
+            color: white;
+            position: absolute;
+            bottom: 20%;
+            right: 10%;
+        }
+    </style>
+
 @stop
 
 @section("content")
 
-    <div class="c-swiper-specials firstWeek">
+    <div class="banner">
+        <div class="bannerGrayBox"></div>
+        <div class="bannerBorderBox bannerLightGreenBox"></div>
+        <div class="bannerMainBox servicesBanner">
+            <div class="bannerText">پروژه های خدماتی</div>
+        </div>
+    </div>
+
+    <div class="c-swiper-specials firstWeek" style="margin-top: 100px">
         <section class="container container--home" id="sn-carousels-incredible-offer">
             <a href="/incredible-offers/" class="c-swiper-specials__title c-swiper-specials__title--incredible" title="پیشنهاد شگفت&zwnj;انگیز">
                 <img src="https://www.digikala.com/static/files/b6c724a0.png" alt="پیشنهاد شگفت&zwnj;انگیز">
