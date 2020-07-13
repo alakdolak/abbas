@@ -2,28 +2,23 @@
 
 
 @section("header")
+
     @parent
-
-    <style>
-
-        .col-xs-12 {
-            margin: 20px;
-        }
-
-    </style>
-
+    <link rel="stylesheet" href="{{\Illuminate\Support\Facades\URL::asset("css/choosePlan.css")}}">
 @stop
 
 @section("content")
 
-    <center class="col-xs-12">
-    <button onclick="document.location.href = '{{route('showAllProducts')}}'" class="btn btn-primary">فروشگاه کالا</button>
-    </center>
-    <center class="col-xs-12">
-    <button class="btn btn-primary">پروژه ها</button>
-    </center>
-    <center class="col-xs-12">
-    <button class="btn btn-primary">خدمات</button>
-    </center>
+    <div class="choosePlane">
+        <div onclick="document.location.href = '{{route('showAllProjects')}}'" class="planes projects">
+            <div class="planeText">معرفی پروژه‌ها</div>
+        </div>
+        <div onclick="document.location.href = '{{route('showAllServices')}}'" class="planes Services">
+            <div class="planeText">پروژه‌های خدماتی</div>
+        </div>
+        <div onclick="document.location.href = '{{route('showAllProducts')}}'" class="planes Products">
+            <div class="planeText">معرفی محصولات</div>
+        </div>
+    </div>
 
 @stop

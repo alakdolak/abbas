@@ -3,7 +3,6 @@
 @section('header')
     @parent
 
-
     <style>
         * {
             box-sizing: border-box;
@@ -112,18 +111,8 @@
         th, td {
             text-align: right;
         }
-
-        .calendar {
-            z-index: 1000000000000 !important;
-        }
-
     </style>
 
-    <script src = {{URL::asset("js/calendar.js") }}></script>
-    <script src = {{URL::asset("js/calendar-setup.js") }}></script>
-    <script src = {{URL::asset("js/calendar-fa.js") }}></script>
-    <script src = {{URL::asset("js/jalali.js") }}></script>
-    <link rel="stylesheet" href = {{URL::asset("css/calendar-green.css") }}>
     <script src="//cdn.ckeditor.com/4.10.1/full/ckeditor.js"></script>
 
 @stop
@@ -133,7 +122,7 @@
     <center style="margin-top: 100px">
 
         <div style="margin: 20px">
-            <button onclick="addProduct()" class="btn btn-primary">افزودن محصول جدید</button>
+            <button onclick="addService()" class="btn btn-primary">افزودن خدمت جدید</button>
         </div>
 
         <div class="portlet box purple">
@@ -141,14 +130,13 @@
             <div class="portlet-title">
                 <div class="caption" style="float: right">
                     <i style="float: right" class="fa fa-cogs"></i>
-                    <span style="margin-right: 10px">محصولات تعریف شده</span>
+                    <span style="margin-right: 10px">خدمات تعریف شده</span>
                 </div>
             </div>
-
             <div class="portlet-body">
 
-                @if(count($products) == 0)
-                    <h3>محصولی تعریف نشده است</h3>
+                @if(count($services) == 0)
+                    <h3>خدمتی تعریف نشده است</h3>
                 @else
 
                     <div>
@@ -169,13 +157,12 @@
                             <tr>
                                 <th scope="col">ردیف</th>
                                 <th scope="col">نام</th>
-                                <th scope="col">صاحب محصول</th>
                                 <th scope="col">پایه تحصیلی</th>
+                                <th scope="col">موجودی</th>
                                 <td scope="col">تصویر</td>
                                 <th scope="col" style="width:450px !important">توضیح</th>
-                                <th scope="col">قیمت</th>
-                                <th scope="col">ستاره ها</th>
-                                <th scope="col">تاریخ تعریف محصول</th>
+                                <th scope="col">تعداد ستاره ها</th>
+                                <th scope="col">تاریخ تعریف خدمت</th>
                                 <th scope="col">خریدار</th>
                                 <th scope="col">وضعیت نمایش</th>
                                 <th scope="col">عملیات</th>
@@ -184,30 +171,32 @@
 
                             <tbody>
                             <?php $i = 1; ?>
-                            @foreach($products as $itr)
+                            @foreach($services as $itr)
                                 <tr class="myTr tr_{{$itr->grade_id}}" id="tr_{{$itr->id}}">
                                     <td>{{$i}}</td>
-                                    <td>{{$itr->name}}</td>
-                                    <td>{{$itr->owner}}</td>
+                                    <td>{{$itr->title}}</td>
                                     <td>{{$itr->grade}}</td>
+                                    <td>{{$itr->capacity}}</td>
                                     <td><img width="100px" src="{{$itr->pic}}"></td>
                                     <td>{!! html_entity_decode($itr->description) !!}</td>
-                                    <td>{{$itr->price}}</td>
                                     <td>{{$itr->star}}</td>
                                     <td>{{$itr->date}}</td>
                                     <td>{{$itr->buyer}}</td>
                                     <td>{{$itr->hide}}</td>
                                     <td>
-                                        <button onclick="removeProduct('{{$itr->id}}')" class="btn btn-danger" data-toggle="tooltip" title="حذف">
+                                        <button onclick="removeService('{{$itr->id}}')" class="btn btn-danger" data-toggle="tooltip" title="حذف">
                                             <span style="font-family: 'Glyphicons Halflings' !important;" class="glyphicon glyphicon-trash"></span>
                                         </button>
 
-                                        <button class="btn btn-primary" data-toggle="tooltip" title="ویرایش">
+                                        <button onclick="" class="btn btn-primary" data-toggle="tooltip" title="ویرایش">
                                             <span style="font-family: 'Glyphicons Halflings' !important;" class="glyphicon glyphicon-edit"></span>
                                         </button>
 
                                         <button class="btn btn-warning" onclick="toggleHide('{{$itr->id}}')"><span>تغییر وضعیت نمایش</span></button>
 
+                                        @if($itr->buyer != "هنوز خریداری نشده است." && !$itr->buyStatus)
+                                            <button class="btn btn-default" onclick="done('{{$itr->id}}')"><span>تاییده انجام کار</span></button>
+                                        @endif
                                     </td>
                                 </tr>
                                 <?php $i += 1; ?>
@@ -222,57 +211,35 @@
 
     </center>
 
-    <div id="preModal" class="modal">
-
-        <div class="modal-content" style="height: 300px">
-            <center>
-
-                <h5 style="padding-right: 5%;">نام کاربری/کد ملی صاحب محصول</h5>
-                <input type="text" id="username" name="username" required>
-
-            </center>
-
-            <div style="margin-top: 20px">
-                <input onclick="getDetail()" type="submit" value="افزودن" class="btn green"  style="margin-right: 5%; margin-bottom: 3%">
-                <input type="button" value="انصراف" class="btn green"  style="float: left; margin-bottom: 3%; margin-left: 5%;" onclick="document.getElementById('preModal').style.display = 'none'">
-            </div>
-        </div>
-
-    </div>
-
     <div id="myAddModal" class="modal">
 
-        <form action="{{route('addProduct')}}" method="post" enctype="multipart/form-data">
+        <form action="{{route('addService')}}" method="post" enctype="multipart/form-data">
             {{ csrf_field() }}
             <div class="modal-content" style="width: 75% !important;">
 
                 <center>
 
-                    <input type="hidden" name="username" id="hiddenUsername">
-
-                    <h5 style="padding-right: 5%;">نام محصول</h5>
+                    <h5 style="padding-right: 5%;">نام خدمت</h5>
                     <input type="text" name="name" required maxlength="100">
 
-                    <h5 style="padding-right: 5%;">قیمت محصول</h5>
-                    <input type="number" name="price" required min="0">
-
-                    <h5 style="padding-right: 5%;">ستاره های محصول</h5>
+                    <h5 style="padding-right: 5%;">تعداد ستاره ها</h5>
                     <input type="number" name="star" required min="0">
 
-                    <h5 style="padding-right: 5%;">پروژه مورد نظر</h5>
-                    <select name="project" id="projects"></select>
+                    <h5 style="padding-right: 5%;">موجودی</h5>
+                    <input type="number" name="capacity" required min="1">
 
-                    <h5>توضیح محصول</h5>
+                    <h5 style="padding-right: 5%;">پایه تحصیلی</h5>
+                    <select name="gradeId" required>
+                        @foreach($grades as $grade)
+                            <option value="{{$grade->id}}">{{$grade->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <h5>توضیح خدمت</h5>
                     <textarea id="editor1" cols="80" name="description" required></textarea>
 
-                    <h5 style="padding-right: 5%;">تصاویر محصول(اختیاری)</h5>
+                    <h5 style="padding-right: 5%;">تصاویر خدمت(اختیاری)</h5>
                     <input type="file" name="file" accept="zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed">
-
-                    <h5 style="padding-right: 5%;">آموزش محصول(اختیاری)</h5>
-                    <input type="file" name="attach" accept="zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed">
-
-                    <h5 style="padding-right: 5%;">تبلیغات محصول(اختیاری)</h5>
-                    <input type="file" name="trailer" accept="zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed">
 
                 </center>
 
@@ -300,59 +267,37 @@
 
         CKEDITOR.replace('editor1');
 
-        function addProduct() {
-            document.getElementById('preModal').style.display = 'block';
+        function addService() {
+            document.getElementById('myAddModal').style.display = 'block';
         }
 
-        function getDetail() {
-
-            var username = $("#username").val();
-
-            if(username.length === 0) {
-                alert("لطفا نام کاربری/کد ملی دانش آموز مورد نظر خود را وارد نمایید.");
-                return;
-            }
+        function done(id) {
 
             $.ajax({
                 type: 'post',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                 },
-                url: '{{route('getOpenProject')}}',
+                url: '{{route('doneService')}}',
                 data: {
-                    username: username
+                    id: id
                 },
                 success: function (res) {
-
-                    res = JSON.parse(res);
-
-                    if(res.length === 0) {
-                        alert("دانش آموز مورد نظر پروژه بازی ندارد.");
-                        return;
-                    }
-
-                    var newElem = "";
-
-                    for(var i = 0; i < res.length; i++) {
-                        newElem += "<option value='" + res[i].id + "'>" + res[i].title + "</option>";
-                    }
-
-                    $("#hiddenUsername").val(username);
-                    $("#projects").empty().append(newElem);
-                    document.getElementById('preModal').style.display = 'none'
-                    document.getElementById('myAddModal').style.display = 'block';
+                    if(res == "ok")
+                        alert("عملیات مورد نظر با موفقیت انجام پذیرفت.");
                 }
             });
+
         }
 
-        function removeProduct(id) {
+        function removeService(id) {
 
             $.ajax({
                 type: 'post',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                 },
-                url: '{{route('deleteProduct')}}',
+                url: '{{route('deleteService')}}',
                 data: {
                     id: id
                 },
@@ -373,7 +318,7 @@
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                 },
-                url: '{{route('toggleHideProduct')}}',
+                url: '{{route('toggleHideService')}}',
                 data: {
                     id: id
                 },

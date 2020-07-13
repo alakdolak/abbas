@@ -45,24 +45,44 @@ Route::group(['middleware' => ['auth', 'siteTime']], function () {
 
     Route::post('like', ['as' => 'like', 'uses' => 'HomeController@like']);
 
+    Route::post("sendMsg", ["as" => "sendMsg", "uses" => "HomeController@sendMsg"]);
+
+    Route::post("reloadMsgs", ["as" => "reloadMsgs", "uses" => "HomeController@reloadMsgs"]);
+
+
+
+    Route::get('showAllServices', ['as' => 'showAllServices', 'uses' => 'HomeController@showAllServices']);
+
+    Route::get('showService/{id}', ['as' => 'showService', 'uses' => 'HomeController@showService']);
+
+
     Route::get('showAllProjects', ['as' => 'showAllProjects', 'uses' => 'HomeController@showAllProjects']);
 
     Route::get('showProject/{id}', ['as' => 'showProject', 'uses' => 'HomeController@showProject']);
+
+
 
     Route::get('showProduct/{id}', ['as' => 'showProduct', 'uses' => 'HomeController@showProduct']);
 
     Route::get('showAllProducts', ['as' => 'showAllProducts', 'uses' => 'HomeController@showAllProducts']);
 
+
+
     Route::post('convertStarToCoin', ['as' => 'convertStarToCoin', 'uses' => 'HomeController@convertStarToCoin']);
+
 
     Route::post('buyProject', ['as' => 'buyProject', 'uses' => 'HomeController@buyProject']);
 
     Route::post('buyProduct', ['as' => 'buyProduct', 'uses' => 'HomeController@buyProduct']);
 
+    Route::post('buyService', ['as' => 'buyService', 'uses' => 'HomeController@buyService']);
+
+
     Route::get('myProjects', ['as' => 'myProjects', 'uses' => 'HomeController@myProjects']);
 
     Route::get('myProducts', ['as' => 'myProducts', 'uses' => 'HomeController@myProducts']);
 
+    Route::get('myServices', ['as' => 'myServices', 'uses' => 'HomeController@myServices']);
 });
 
 Route::group(['middleware' => ['auth', 'adminLevel']], function () {
@@ -97,6 +117,17 @@ Route::group(['middleware' => ['auth', 'adminLevel']], function () {
     Route::post('editGrade', ['as' => 'editGrade', 'uses' => 'AdminController@editGrade']);
 
 
+
+    Route::get('tags', ['as' => 'tags', 'uses' => 'AdminController@tags']);
+
+    Route::post('addTag', ['as' => 'addTag', 'uses' => 'AdminController@addTag']);
+
+    Route::post('deleteTag', ['as' => 'deleteTag', 'uses' => 'AdminController@deleteTag']);
+
+    Route::post('editTag', ['as' => 'editTag', 'uses' => 'AdminController@editTag']);
+
+
+
     Route::post('addUsers/{gradeId}', ['as' => 'addUsers', 'uses' => 'AdminController@addUsers']);
 
 });
@@ -109,6 +140,9 @@ Route::group(['middleware' => ['auth', 'adminLevel']], function () {
 
     Route::get('userBuys/{uId}', ['as' => 'userBuys', 'uses' => 'ReportController@userBuys']);
 
+    Route::post('editMoney', ['as' => 'editMoney', 'uses' => 'AdminController@editMoney']);
+
+
 });
 
 Route::group(['middleware' => ['auth', 'operatorLevel']], function () {
@@ -119,6 +153,16 @@ Route::group(['middleware' => ['auth', 'operatorLevel']], function () {
 
     Route::post('editProduct', ['as' => 'editProduct', 'uses' => 'OperatorController@editProduct']);
 
+
+    Route::get('services/{err?}', ['as' => 'services', 'uses' => 'OperatorController@services']);
+
+    Route::post('addService', ['as' => 'addService', 'uses' => 'OperatorController@addService']);
+
+    Route::post('editService', ['as' => 'editService', 'uses' => 'OperatorController@editService']);
+
+    Route::post('doneService', ['as' => 'doneService', 'uses' => 'OperatorController@doneService']);
+
+
     Route::get('projects', ['as' => 'projects', 'uses' => 'OperatorController@projects']);
 
     Route::post('addProject', ['as' => 'addProject', 'uses' => 'OperatorController@addProject']);
@@ -127,14 +171,33 @@ Route::group(['middleware' => ['auth', 'operatorLevel']], function () {
 
     Route::post('doEditProject', ['as' => 'doEditProject', 'uses' => 'OperatorController@doEditProject']);
 
+
+
     Route::post('deleteProduct', ['as' => 'deleteProduct', 'uses' => 'OperatorController@deleteProduct']);
 
     Route::post('deleteProject', ['as' => 'deleteProject', 'uses' => 'OperatorController@deleteProject']);
+
+    Route::post('deleteService', ['as' => 'deleteService', 'uses' => 'OperatorController@deleteService']);
+
 
     Route::post('toggleHideProject', ['as' => 'toggleHideProject', 'uses' => 'OperatorController@toggleHideProject']);
 
     Route::post('toggleHideProduct', ['as' => 'toggleHideProduct', 'uses' => 'OperatorController@toggleHideProduct']);
 
+    Route::post('toggleHideService', ['as' => 'toggleHideService', 'uses' => 'OperatorController@toggleHideService']);
+
     Route::post('getOpenProject', ['as' => 'getOpenProject', 'uses' => 'OperatorController@getOpenProject']);
 
+
+
+    Route::post('addTagProject', ['as' => 'addTagProject', 'uses' => 'OperatorController@addTagProject']);
+
+    Route::post('deleteTagProject', ['as' => 'deleteTagProject', 'uses' => 'OperatorController@deleteTagProject']);
+
+
+    Route::get("msgs/{chatId}", ["as" => "msgs", "uses" => "OperatorController@msgs"]);
+
+    Route::get("chats", ["as" => "chats", "uses" => "OperatorController@chats"]);
+
+    Route::post("sendRes", ["as" => "sendRes", "uses" => "OperatorController@sendRes"]);
 });

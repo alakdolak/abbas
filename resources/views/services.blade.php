@@ -326,13 +326,6 @@
 
 @section("content")
 
-    <center style="margin: 40px;">
-        <button id="allTags" class="tagFilter selectedTag" data-status="1" data-filter="-1">همه</button>
-        @foreach($tags as $tag)
-            <button data-status="0" class="tagFilter" data-filter="{{$tag->id}}">{{$tag->name}}</button>
-        @endforeach
-    </center>
-
     <div class="c-swiper-specials firstWeek">
         <section class="container container--home" id="sn-carousels-incredible-offer">
             <a href="/incredible-offers/" class="c-swiper-specials__title c-swiper-specials__title--incredible" title="پیشنهاد شگفت&zwnj;انگیز">
@@ -343,36 +336,31 @@
                 <div class="c-box">
                     <div class="swiper-container swiper-container-horizontal js-swiper-specials swiper-container-rtl">
                         <div class="swiper-wrapper" style="transform: translate3d(0px, 0px, 0px);">
-                            @for($i = 0; $i < 4; $i++)
-                                @foreach($products as $product)
-                                    <div class="myItem swiper-slide" style="margin-top: 20px" data-tag="{{$product->tagStr}}">
+
+                            @for($i = 0; $i < 2; $i++)
+                                @foreach($services as $service)
+                                    <div class="swiper-slide" style="margin-top: 20px">
                                         <li>
-                                            <a href="{{route('showProduct', ['id' => $product->id])}}" class="c-product-box__box-link"></a>
+                                            <a href="{{route('showService', ['id' => $service->id])}}" class="c-product-box__box-link"></a>
                                             <div class="c-product-box c-product-box--product-card c-product-box--has-overflow c-product-box--card-macro">
                                                 <div class="c-product-box__img js-url js-snt-carousel_product">
-                                                    <img src="{{$product->pic}}" class="swiper-lazy swiper-lazy-loaded">
+                                                    <img src="{{$service->pic}}" class="swiper-lazy swiper-lazy-loaded">
                                                 </div>
-                                                <div class="c-product-box__title">{{$product->name}}</div>
+                                                <div class="c-product-box__title">{{$service->title}}</div>
                                                 <div class="c-product-box__row c-product-box__row--price">
                                                     <div class="c-price">
                                                         <div class="c-price__value c-price__value--plp">
-                                                            <div class="c-price__value-wrapper">{{$product->price}} <span class="c-price__currency">سکه</span>
+                                                            <div class="c-price__value-wrapper">{{$service->star}} <span class="c-price__currency">ستاره</span>
                                                             </div>
                                                         </div>
                                                     </div>
-
-                                                    <p style="direction: rtl; text-align: right">
-                                                        @foreach($product->tags as $tag)
-                                                            <span>#{{$tag->name}}</span>
-                                                            <span>&nbsp;&nbsp;</span>
-                                                        @endforeach
-                                                    </p>
                                                 </div>
                                             </div>
                                         </li>
                                     </div>
                                 @endforeach
                             @endfor
+
                         </div>
 
                     </div>
@@ -392,29 +380,22 @@
                     <div class="swiper-container swiper-container-horizontal js-swiper-specials swiper-container-rtl">
                         <div class="swiper-wrapper" style="transform: translate3d(0px, 0px, 0px);">
 
-                            @foreach($products as $product)
-                                <div class="myItem swiper-slide" data-tag="{{$product->tagStr}}">
+                            @foreach($services as $service)
+                                <div class="swiper-slide">
                                     <li>
-                                        <a href="{{route('showProduct', ['id' => $product->id])}}" class="c-product-box__box-link"></a>
+                                        <a href="{{route('showService', ['id' => $service->id])}}" class="c-product-box__box-link"></a>
                                         <div class="c-product-box c-product-box--product-card c-product-box--has-overflow c-product-box--card-macro">
                                             <div class="c-product-box__img js-url js-snt-carousel_product">
-                                                <img src="{{$product->pic}}" class="swiper-lazy swiper-lazy-loaded">
+                                                <img src="{{$service->pic}}" class="swiper-lazy swiper-lazy-loaded">
                                             </div>
-                                            <div class="c-product-box__title">{{$product->name}}</div>
+                                            <div class="c-product-box__title">{{$service->title}}</div>
                                             <div class="c-product-box__row c-product-box__row--price">
                                                 <div class="c-price">
                                                     <div class="c-price__value c-price__value--plp">
-                                                        <div class="c-price__value-wrapper">{{$product->price}} <span class="c-price__currency">سکه</span>
+                                                        <div class="c-price__value-wrapper">{{$service->star}} <span class="c-price__currency">ستاره</span>
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <p style="direction: rtl; text-align: right">
-                                                    @foreach($product->tags as $tag)
-                                                        <span>#{{$tag->name}}</span>
-                                                        <span>&nbsp;&nbsp;</span>
-                                                    @endforeach
-                                                </p>
                                             </div>
                                         </div>
                                     </li>
@@ -429,61 +410,5 @@
         </section>
     </div>
 
-    <script>
-
-        $(document).ready(function () {
-
-            $(".tagFilter").on('click', function () {
-
-                if($(this).attr("data-filter") == "-1" && $(this).attr("data-status") == "0") {
-                    $(".tagFilter").attr("data-status", "0").removeClass("selectedTag");
-                    $(this).attr("data-status", "1");
-                    $(this).addClass("selectedTag");
-                    $(".myItem").removeClass("hidden");
-                    return;
-                }
-                else if($(this).attr("data-filter") == "-1") {
-                    $(this).attr("data-status", "0").removeClass("selectedTag");
-                    $(".myItem").addClass("hidden");
-                    return;
-                }
-                else {
-                    $("#allTags").attr("data-status", "0").removeClass("selectedTag");
-                }
-
-                if($(this).attr("data-status") == "0") {
-                    $(this).attr("data-status", "1");
-                    $(this).addClass("selectedTag");
-                }
-                else {
-                    $(this).attr("data-status", "0");
-                    $(this).removeClass("selectedTag");
-                }
-
-                var selectedTags = [];
-
-                $(".tagFilter").each(function () {
-                    if($(this).attr("data-status") == "1")
-                        selectedTags.push($(this).attr("data-filter"));
-                });
-
-                $(".myItem").addClass("hidden").each(function () {
-
-                    for (var i = 0; i < selectedTags.length; i++) {
-
-                        if($(this).attr("data-tag").includes("-" + selectedTags[i] + "-")) {
-                            $(this).removeClass("hidden");
-                            break;
-                        }
-                    }
-
-                });
-
-            });
-
-
-        });
-
-    </script>
 
 @stop

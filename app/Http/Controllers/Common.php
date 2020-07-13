@@ -49,11 +49,19 @@ function MiladyToShamsi($time, $date = ""){
     return gregorian_to_jalali($date[0],$date[1],$date[2],'-');
 }
 
+function MiladyToShamsiTime($time){
+
+    include_once 'jdate.php';
+    $x = strtotime("+270 minutes", $time);
+
+    return jstrftime('%H:%M:%S', $x);
+}
+
 function getValueInfo($key) {
 
     $values = [
-        "studentLevel" => 1, 'operator1Level' => 2,'adminLevel' => 3,
-        "projectMode" => 1, "productMode" => 2
+        "studentLevel" => 1, 'operatorLevel' => 2,'adminLevel' => 3,
+        "projectMode" => 1, "productMode" => 2, "serviceMode" => 3,
     ];
 
     return $values[$key];
@@ -229,4 +237,8 @@ function convertStringToDate($date) {
 function convertDateToString($date) {
     $subStrD = explode('/', $date);
     return $subStrD[0] . $subStrD[1] . $subStrD[2];
+}
+
+function convertStringToTime($time) {
+    return $time[0] . $time[1] . ":" . $time[2] . $time[3];
 }

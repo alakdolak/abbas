@@ -9,6 +9,7 @@ use App\models\Grade;
 use App\models\PointConfig;
 use App\models\RedundantInfo1;
 use App\models\SchoolStudent;
+use App\models\Tag;
 use App\models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -125,6 +126,57 @@ class AdminController extends Controller {
             FAQCategory::destroy(makeValidInput($_POST["categoryId"]));
         }
         return Redirect::route('faqCategories');
+    }
+
+
+    public function tags($err = "") {
+        return view('tags', ['items' => Tag::all(), 'err' => $err]);
+    }
+
+    public function addTag() {
+
+        if(isset($_POST["name"])) {
+
+            $tmp = new Tag();
+            $tmp->name = makeValidInput($_POST["name"]);
+
+            try {
+                $tmp->save();
+            }
+            catch (\Exception $x) {
+                return $this->tags('تگ مورد نظر در سامانه موجود است');
+            }
+        }
+
+        return Redirect::route('tags');
+    }
+
+    public function editTag() {
+
+        if(isset($_POST["newName"]) && isset($_POST["tagId"])) {
+
+            $cat = Tag::whereId(makeValidInput($_POST["tagId"]));
+
+            if($cat != null) {
+                $cat->name = makeValidInput($_POST["newName"]);
+                try {
+                    $cat->save();
+                }
+                catch (\Exception $x) {
+                    return $this->tags('تگ مورد نظر در سامانه موجود است');
+                }
+            }
+        }
+
+        return Redirect::route('tags');
+    }
+
+    public function deleteTag() {
+
+        if(isset($_POST["tagId"])) {
+            Tag::destroy(makeValidInput($_POST["tagId"]));
+        }
+        return Redirect::route('tags');
     }
 
 
@@ -302,6 +354,25 @@ class AdminController extends Controller {
 
             $user->save();
             echo "ok";
+        }
+
+    }
+
+
+    public function editMoney() {
+
+        if(isset($_POST["id"]) && isset($_POST["coin"]) && isset($_POST["star"])) {
+
+            $user = User::whereId(makeValidInput($_POST["id"]));
+
+            if($user == null)
+                return Redirect::route("profile");
+
+            $user->money = makeValidInput($_POST["coin"]);
+            $user->stars = makeValidInput($_POST["star"]);
+            $user->save();
+
+            return Redirect::route("usersReport", ["gradeId" => $user->grade_id]);
         }
 
     }

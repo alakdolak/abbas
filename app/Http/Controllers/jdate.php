@@ -212,6 +212,223 @@ function jdate($format, $ago = "", $timestamp='',$none='',$time_zone='Asia/Tehra
     return($tr_num!='en')?tr_num($out,'fa','.'):$out;
 }
 
+function jstrftime2($format, $date){
+
+//    $T_sec=0;/* <= رفع خطاي زمان سرور ، با اعداد '+' و '-' بر حسب ثانيه */
+//
+//    if($time_zone!='local')date_default_timezone_set(($time_zone=='')?'Asia/Tehran':$time_zone);
+//    $ts=($timestamp=='' or $timestamp=='now')?time()+$T_sec:tr_num($timestamp)+$T_sec;
+//    $date=explode('_',date('h_H_i_j_n_s_w_Y',$ts));
+
+    list($j_y,$j_m,$j_d)=gregorian_to_jalali($date[7],$date[4],$date[3]);
+    $doy=($j_m<7)?(($j_m-1)*31)+$j_d-1:(($j_m-7)*30)+$j_d+185;
+    $kab=($j_y%33%4-1==(int)($j_y%33*.05))?1:0;
+    $sl=strlen($format);
+    $out='';
+    for($i=0; $i<$sl; $i++){
+        $sub=substr($format,$i,1);
+        if($sub=='%'){
+            $sub=substr($format,++$i,1);
+        }else{
+            $out.=$sub;
+            continue;
+        }
+        switch($sub){
+
+            /* Day */
+            case'a':
+                $out.=jdate_words(array('kh'=>$date[6]),' ');
+                break;
+
+            case'A':
+                $out.=jdate_words(array('rh'=>$date[6]),' ');
+                break;
+
+            case'd':
+                $out.=($j_d<10)?'0'.$j_d:$j_d;
+                break;
+
+            case'e':
+                $out.=($j_d<10)?' '.$j_d:$j_d;
+                break;
+
+            case'j':
+                $out.=str_pad($doy+1,3,0,STR_PAD_LEFT);
+                break;
+
+            case'u':
+                $out.=$date[6]+1;
+                break;
+
+            case'w':
+                $out.=($date[6]==6)?0:$date[6]+1;
+                break;
+
+            /* Week */
+            case'U':
+                $avs=(($date[6]<5)?$date[6]+2:$date[6]-5)-($doy%7);
+                if($avs<0)$avs+=7;
+                $num=(int)(($doy+$avs)/7)+1;
+                if($avs>3 or $avs==1)$num--;
+                $out.=($num<10)?'0'.$num:$num;
+                break;
+
+            case'V':
+                $avs=(($date[6]==6)?0:$date[6]+1)-($doy%7);
+                if($avs<0)$avs+=7;
+                $num=(int)(($doy+$avs)/7);
+                if($avs<4){
+                    $num++;
+                }elseif($num<1){
+                    $num=($avs==4 or $avs==(($j_y%33%4-2==(int)($j_y%33*.05))?5:4))?53:52;
+                }
+                $aks=$avs+$kab;
+                if($aks==7)$aks=0;
+                $out.=(($kab+363-$doy)<$aks and $aks<3)?'01':(($num<10)?'0'.$num:$num);
+                break;
+
+            case'W':
+                $avs=(($date[6]==6)?0:$date[6]+1)-($doy%7);
+                if($avs<0)$avs+=7;
+                $num=(int)(($doy+$avs)/7)+1;
+                if($avs>3)$num--;
+                $out.=($num<10)?'0'.$num:$num;
+                break;
+
+            /* Month */
+            case'b':
+            case'h':
+                $out.=jdate_words(array('km'=>$j_m),' ');
+                break;
+
+            case'B':
+                $out.=jdate_words(array('mm'=>$j_m),' ');
+                break;
+
+            case'm':
+                $out.=($j_m>9)?$j_m:'0'.$j_m;
+                break;
+
+            /* Year */
+            case'C':
+                $out.=substr($j_y,0,2);
+                break;
+
+            case'g':
+                $jdw=($date[6]==6)?0:$date[6]+1;
+                $dny=364+$kab-$doy;
+                $out.=substr(($jdw>($doy+3) and $doy<3)?$j_y-1:(((3-$dny)>$jdw and $dny<3)?$j_y+1:$j_y),2,2);
+                break;
+
+            case'G':
+                $jdw=($date[6]==6)?0:$date[6]+1;
+                $dny=364+$kab-$doy;
+                $out.=($jdw>($doy+3) and $doy<3)?$j_y-1:(((3-$dny)>$jdw and $dny<3)?$j_y+1:$j_y);
+                break;
+
+            case'y':
+                $out.=substr($j_y,2,2);
+                break;
+
+            case'Y':
+                $out.=$j_y;
+                break;
+
+            /* Time */
+            case'H':
+                $out.=$date[1];
+                break;
+
+            case'I':
+                $out.=$date[0];
+                break;
+
+            case'l':
+                $out.=($date[0]>9)?$date[0]:' '.(int)$date[0];
+                break;
+
+            case'M':
+                $out.=$date[2];
+                break;
+
+            case'p':
+                $out.=($date[1]<12)?'قبل از ظهر':'بعد از ظهر';
+                break;
+
+            case'P':
+                $out.=($date[1]<12)?'ق.ظ':'ب.ظ';
+                break;
+
+            case'r':
+                $out.=$date[0].':'.$date[2].':'.$date[5].' '.(($date[1]<12)?'قبل از ظهر':'بعد از ظهر');
+                break;
+
+            case'R':
+                $out.=$date[1].':'.$date[2];
+                break;
+
+            case'S':
+                $out.=$date[5];
+                break;
+
+            case'T':
+                $out.=$date[1].':'.$date[2].':'.$date[5];
+                break;
+
+            case'X':
+                $out.=$date[0].':'.$date[2].':'.$date[5];
+                break;
+
+            case'z':
+                $out.=date('O',$ts);
+                break;
+
+            case'Z':
+                $out.=date('T',$ts);
+                break;
+
+            /* Time and Date Stamps */
+            case'c':
+                $key=jdate_words(array('rh'=>$date[6],'mm'=>$j_m));
+                $out.=$date[1].':'.$date[2].':'.$date[5].' '.date('P',$ts)
+                    .' '.$key['rh'].'، '.$j_d.' '.$key['mm'].' '.$j_y;
+                break;
+
+            case'D':
+                $out.=substr($j_y,2,2).'/'.(($j_m>9)?$j_m:'0'.$j_m).'/'.(($j_d<10)?'0'.$j_d:$j_d);
+                break;
+
+            case'F':
+                $out.=$j_y.'-'.(($j_m>9)?$j_m:'0'.$j_m).'-'.(($j_d<10)?'0'.$j_d:$j_d);
+                break;
+
+            case's':
+                $out.=$ts;
+                break;
+
+            case'x':
+                $out.=substr($j_y,2,2).'/'.(($j_m>9)?$j_m:'0'.$j_m).'/'.(($j_d<10)?'0'.$j_d:$j_d);
+                break;
+
+            /* Miscellaneous */
+            case'n':
+                $out.="\n";
+                break;
+
+            case't':
+                $out.="\t";
+                break;
+
+            case'%':
+                $out.='%';
+                break;
+
+            default:$out.=$sub;
+        }
+    }
+    return($tr_num!='en')?tr_num($out,'fa','.'):$out;
+}
+
 /*	F	*/
 function jstrftime($format,$timestamp='',$none='',$time_zone='Asia/Tehran',$tr_num='fa'){
 

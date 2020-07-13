@@ -1,0 +1,48 @@
+.header {
+    height: 100px;
+    background-color: #fe9210;
+    border-bottom: 10px solid #f9f9f9;
+    padding: 0 12%;
+    position: relative;
+}
+
+.logoDiv {
+    position: relative;
+    width: 350px;
+    height: 100px;
+    cursor: pointer;
+}
+
+.logoPic {
+    width: 100px;
+    height: 125px;
+    background-image: url(../images/logo.png);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 7%;
+}
+
+.logoText {
+    width: 250px;
+    height: 100px;
+    background-image: url(../images/logoText.png);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    position: absolute;
+    right: 25%;
+}
+
+.nav {
+    position: absolute;
+    left: 12%;
+    bottom: 15px;
+    color: white;
+}
+
+.navbar {
+    display: inline-block;
+    cursor: pointer;
+    margin: 0 10px;
+    text-align: center;
+}

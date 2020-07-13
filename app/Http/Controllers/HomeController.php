@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 
 use App\models\Bookmark;
+use App\models\Chat;
 use App\models\CommonQuestion;
 use App\models\ConfigModel;
 use App\models\FAQCategory;
 use App\models\Likes;
+use App\models\Msg;
 use App\models\Product;
 use App\models\ProductAttach;
 use App\models\ProductPic;
@@ -15,6 +17,10 @@ use App\models\Project;
 use App\models\ProjectAttach;
 use App\models\ProjectBuyers;
 use App\models\ProjectPic;
+use App\models\Service;
+use App\models\ServiceBuyer;
+use App\models\ServicePic;
+use App\models\Tag;
 use App\models\Transaction;
 use App\models\User;
 use Illuminate\Support\Facades\Auth;
@@ -38,10 +44,6 @@ class HomeController extends Controller {
     }
 
     public function choosePlan() {
-
-        if(Auth::user()->level != getValueInfo('studentLevel'))
-            return Redirect::route('profile');
-
         return view('choosePlan');
     }
 
@@ -107,6 +109,65 @@ class HomeController extends Controller {
         return view('home', ['loginErr' => $msg, "reminder" => $x]);
     }
 
+
+    public function showAllServices() {
+
+        $grade = Auth::user()->grade_id;
+
+        $services = DB::select('select id, title, description, star from service where grade_id = ' . $grade .
+            ' and hide = false order by id desc');
+
+        foreach ($services as $service) {
+
+            $tmpPic = ServicePic::whereServiceId($service->id)->first();
+
+            if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/servicePic/' . $tmpPic->name))
+                $service->pic = URL::asset('servicePic/defaultPic.jpg');
+            else
+                $service->pic = URL::asset('servicePic/' . $tmpPic->name);
+
+            $service->likes = Likes::whereItemId($service->id)->whereMode(getValueInfo('serviceMode'))->count();
+        }
+
+        return view('services', ['services' => $services]);
+    }
+
+    public function showService($id) {
+
+        $service = Service::whereId($id);
+        $grade = Auth::user()->grade_id;
+
+        if($service == null || $service->hide ||
+            (Auth::user()->level == getValueInfo('studentLevel') && $grade != $service->grade_id)) {
+            return Redirect::route('home');
+        }
+
+        $tmpPics = ServicePic::whereServiceId($service->id)->get();
+        $pics = [];
+
+        foreach ($tmpPics as $tmpPic) {
+
+            if(file_exists(__DIR__ . '/../../../public/servicePic/' . $tmpPic->name))
+                $pics[count($pics)] = URL::asset('servicePic/' . $tmpPic->name);
+
+        }
+
+        $service->pics = $pics;
+
+        $bookmark = (Bookmark::whereUserId(Auth::user()->id)->whereItemId($id)->whereMode(getValueInfo('serviceMode'))->count() > 0);
+        $like = (Likes::whereUserId(Auth::user()->id)->whereItemId($id)->whereMode(getValueInfo('serviceMode'))->count() > 0);
+
+        $canBuy = true;
+
+        if(ServiceBuyer::whereServiceId($id)->count() > 0)
+            $canBuy = false;
+
+        return view('showService', ['bookmark' => $bookmark, 'canBuy' => $canBuy,
+            'service' => $service, 'like' => $like]);
+    }
+
+
+
     public function showAllProjects() {
 
         $grade = Auth::user()->grade_id;
@@ -130,9 +191,14 @@ class HomeController extends Controller {
                 $project->price = number_format($project->price);
 
             $project->likes = Likes::whereItemId($project->id)->whereMode(getValueInfo('projectMode'))->count();
+            $project->tags = DB::select("select t.name, p.id from tag t, project_tag p where t.id = p.tag_id and p.project_id = " . $project->id);
+            $str = "-";
+            foreach ($project->tags as $tag)
+                $str .= $tag->id . '-';
+            $project->tagStr = $str;
         }
 
-        return view('projects', ['projects' => $projects]);
+        return view('projects', ['projects' => $projects, 'tags' => Tag::all()]);
     }
 
     public function showProject($id) {
@@ -203,12 +269,16 @@ class HomeController extends Controller {
             'project' => $project, 'like' => $like]);
     }
 
+
+
     public function showAllProducts() {
 
         $grade = Auth::user()->grade_id;
 
-        $products = DB::select('select p.id, name, description, price, star, concat(u.first_name, " ", u.last_name) as owner' .
-            ' from product p, users u where p.user_id = u.id and u.grade_id = ' . $grade . ' and hide = false order by p.id desc');
+        $products = DB::select('select p.id, name, description, price, star, project_id, ' .
+            'concat(u.first_name, " ", u.last_name) as owner' .
+            ' from product p, users u where ' .
+            'p.user_id = u.id and u.grade_id = ' . $grade . ' and hide = false order by p.id desc');
 
         foreach ($products as $product) {
 
@@ -225,9 +295,17 @@ class HomeController extends Controller {
                 $product->price = number_format($product->price);
 
             $product->likes = Likes::whereItemId($product->id)->whereMode(getValueInfo('productMode'))->count();
+
+            $product->tags = DB::select("select t.name, t.id from tag t, project_tag p where t.id = p.tag_id and p.project_id = " . $product->project_id);
+
+            $str = "-";
+            foreach ($product->tags as $tag)
+                $str .= $tag->id . '-';
+
+            $product->tagStr = $str;
         }
 
-        return view('products', ['products' => $products]);
+        return view('products', ['products' => $products, 'tags' => Tag::all()]);
 
     }
 
@@ -295,6 +373,8 @@ class HomeController extends Controller {
         return view('showProduct', ['bookmark' => $bookmark, 'canBuy' => $canBuy,
             'product' => $product, 'like' => $like]);
     }
+
+
 
     public function convertStarToCoin() {
 
@@ -373,6 +453,67 @@ class HomeController extends Controller {
         }
 
     }
+
+    public function bookmarks($mode) {
+
+        $items = Bookmark::whereUserId(Auth::user()->id)->whereMode($mode)->get();
+
+        if($mode == getValueInfo('productMode')) {
+
+            $out = [];
+
+            foreach ($items as $product) {
+
+                $product = Product::whereId($product->item_id);
+
+                $tmpPic = ProductPic::whereProductId($product->id)->first();
+
+                if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/productPic/' . $tmpPic->name))
+                    $product->pic = URL::asset('productPic/defaultPic.jpg');
+                else
+                    $product->pic = URL::asset('productPic/' . $tmpPic->name);
+
+                if($product->price == 0)
+                    $product->price = "رایگان";
+                else
+                    $product->price = number_format($product->price);
+
+                $product->likes = Likes::whereItemId($product->id)->whereMode(getValueInfo('productMode'))->count();
+                $out[count($out)] = $product;
+            }
+
+            return view('products', ['products' => $out]);
+
+        }
+        else {
+
+            $out = [];
+
+            foreach ($items as $project) {
+
+                $project = Project::whereId($project->item_id);
+
+                $tmpPic = ProjectPic::whereProjectId($project->id)->first();
+
+                if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/projectPic/' . $tmpPic->name))
+                    $project->pic = URL::asset('projectPic/defaultPic.jpg');
+                else
+                    $project->pic = URL::asset('projectPic/' . $tmpPic->name);
+
+                if($project->price == 0)
+                    $project->price = "رایگان";
+                else
+                    $project->price = number_format($project->price);
+
+                $project->likes = Likes::whereItemId($project->id)->whereMode(getValueInfo('projectMode'))->count();
+                $out[count($out)] = $project;
+            }
+
+            return view('projects', ['projects' => $out]);
+        }
+
+    }
+
 
     public function buyProject() {
 
@@ -479,63 +620,128 @@ class HomeController extends Controller {
 
     }
 
-    public function bookmarks($mode) {
+    public function buyService() {
 
-        $items = Bookmark::whereUserId(Auth::user()->id)->whereMode($mode)->get();
+        if(isset($_POST["id"])) {
 
-        if($mode == getValueInfo('productMode')) {
+            $service = Service::whereId(makeValidInput($_POST["id"]));
+            $user = Auth::user();
 
-            $out = [];
-
-            foreach ($items as $product) {
-
-                $product = Product::whereId($product->item_id);
-
-                $tmpPic = ProductPic::whereProductId($product->id)->first();
-
-                if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/productPic/' . $tmpPic->name))
-                    $product->pic = URL::asset('productPic/defaultPic.jpg');
-                else
-                    $product->pic = URL::asset('productPic/' . $tmpPic->name);
-
-                if($product->price == 0)
-                    $product->price = "رایگان";
-                else
-                    $product->price = number_format($product->price);
-
-                $product->likes = Likes::whereItemId($product->id)->whereMode(getValueInfo('productMode'))->count();
-                $out[count($out)] = $product;
+            if($service == null || $service->hide) {
+                echo "nok1";
+                return;
             }
 
-            return view('products', ['products' => $out]);
-
-        }
-        else {
-
-            $out = [];
-
-            foreach ($items as $project) {
-
-                $project = Project::whereId($project->item_id);
-
-                $tmpPic = ProjectPic::whereProjectId($project->id)->first();
-
-                if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/projectPic/' . $tmpPic->name))
-                    $project->pic = URL::asset('projectPic/defaultPic.jpg');
-                else
-                    $project->pic = URL::asset('projectPic/' . $tmpPic->name);
-
-                if($project->price == 0)
-                    $project->price = "رایگان";
-                else
-                    $project->price = number_format($project->price);
-
-                $project->likes = Likes::whereItemId($project->id)->whereMode(getValueInfo('projectMode'))->count();
-                $out[count($out)] = $project;
+            if($service->grade_id != $user->grade_id) {
+                echo "nok1";
+                return;
             }
 
-            return view('projects', ['projects' => $out]);
+            if(ServiceBuyer::whereServiceId($service->id)->count() > 0) {
+                echo "nok2";
+                return;
+            }
+
+            try {
+                $tmp = new ServiceBuyer();
+                $tmp->user_id = $user->id;
+                $tmp->service_id = $service->id;
+                $tmp->save();
+
+                echo "ok";
+                return;
+            }
+            catch (\Exception $x) {
+                dd($x);
+            }
         }
+
+        echo "nok5";
 
     }
+
+    public function reloadMsgs() {
+
+        if(isset($_POST["lastId"])) {
+
+            $msg = Msg::whereId(makeValidInput($_POST["lastId"]));
+            if($msg == null) {
+                echo json_encode(["status" => "nok"]);
+                return;
+            }
+
+            $msgs = DB::select("select * from msg where chat_id = " . $msg->chat_id .
+                " and id > " . makeValidInput($_POST["lastId"]));
+
+            foreach ($msgs as $msg) {
+                $timestamp = strtotime($msg->created_at);
+                $msg->time = MiladyToShamsiTime($timestamp);
+
+                $timestamp = strtotime($msg->created_at);
+                $msg->time = MiladyToShamsiTime($timestamp);
+            }
+
+
+            echo json_encode(["status" => "ok", "msgs" => $msgs]);
+            return;
+        }
+
+        echo json_encode(["status" => "nok"]);
+    }
+
+    public function sendMsg() {
+
+        if(isset($_POST["msg"])) {
+
+            $chat = DB::select("select id from chat where user_id = " . Auth::user()->id
+                . " and created_at > DATE_SUB(NOW(), INTERVAL 6 HOUR)");
+
+            if($chat != null && count($chat) > 0) {
+
+                $msg = new Msg();
+                $msg->text = makeValidInput($_POST["msg"]);
+                $msg->chat_id = $chat[0]->id;
+                $msg->is_me = true;
+                try {
+                    $msg->save();
+                    echo json_encode(["status" => "ok",
+                        "sendTime" => convertStringToTime(getToday()["time"]),
+                        "id" => $msg->id
+                    ]);
+                    return;
+                }
+                catch (\Exception $x) {
+                    dd($x);
+                }
+            }
+            else {
+
+                try {
+
+                    $c = new Chat();
+                    $c->user_id = Auth::user()->id;
+                    $c->save();
+
+                    $msg = new Msg();
+                    $msg->text = makeValidInput($_POST["msg"]);
+                    $msg->chat_id = $c->id;
+                    $msg->is_me = true;
+
+                    $msg->save();
+                    echo json_encode(["status" => "ok",
+                        "sendTime" => convertStringToTime(getToday()["time"]),
+                        "id" => $msg->id
+                    ]);
+                    return;
+                }
+                catch (\Exception $x) {
+                    dd($x);
+                }
+
+            }
+        }
+
+        echo json_encode(["status" => "nok"]);
+    }
+
 }

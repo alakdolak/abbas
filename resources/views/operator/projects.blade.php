@@ -176,6 +176,7 @@
                                     <th scope="col">هزینه پروژه</th>
                                     <th scope="col">تاریخ تعریف پروژه</th>
                                     <th scope="col">نفرات خریدار پروژه</th>
+                                    <th scope="col">تگ ها</th>
                                     <th scope="col">وضعیت نمایش</th>
                                     <th scope="col">عملیات</th>
                                 </tr>
@@ -195,6 +196,17 @@
                                         <td>{{$itr->price}}</td>
                                         <td>{{$itr->date}}</td>
                                         <td>{{$itr->buyers}}</td>
+                                        <td>
+                                            @foreach($itr->tags as $tag)
+                                                <button id="tag_{{$tag->id}}" onclick="removeTag('{{$tag->id}}')" style="margin: 4px" class="btn btn-info">
+                                                    <span>{{$tag->name}}</span>
+                                                    <span style="font-family: 'Glyphicons Halflings' !important;" class="glyphicon glyphicon-remove"></span>
+                                                </button>
+                                            @endforeach
+                                            <div style="margin-top: 10px">
+                                                <button onclick="showTags('{{$itr->id}}')" class="btn btn-default">افزودن تگ جدید</button>
+                                            </div>
+                                        </td>
                                         <td>{{$itr->hide}}</td>
                                         <td>
                                             <button onclick="removeProject('{{$itr->id}}')" class="btn btn-danger" data-toggle="tooltip" title="حذف">
@@ -361,7 +373,79 @@
         </form>
     </div>
 
+
+    <div id="myTagModal" class="modal">
+
+        <div class="modal-content">
+
+            <center>
+
+                <h5 style="padding-right: 5%;">تگ ها</h5>
+                <select id="tagId">
+                    @foreach($tags as $tag)
+                        <option value="{{$tag->id}}">{{$tag->name}}</option>
+                    @endforeach
+                </select>
+            </center>
+
+            <div style="margin-top: 20px">
+                <input onclick="addNewTag()" type="submit" value="افزودن تگ" class="btn green"  style="margin-right: 5%; margin-bottom: 3%">
+                <input type="button" value="انصراف" class="btn green"  style="float: left; margin-bottom: 3%; margin-left: 5%;" onclick="document.getElementById('myEditModal').style.display = 'none'">
+            </div>
+        </div>
+
+    </div>
+
     <script>
+
+        var itemId;
+
+        function removeTag(id) {
+
+            $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                },
+                url: '{{route('deleteTagProject')}}',
+                data: {
+                    id: id
+                },
+                success: function (res) {
+
+                    if(res === "ok")
+                        $("#tag_" + id).remove();
+
+                }
+            });
+        }
+
+        function showTags(id) {
+            itemId = id;
+            document.getElementById('myTagModal').style.display = 'block';
+        }
+
+        function addNewTag() {
+
+            $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                },
+                url: '{{route('addTagProject')}}',
+                data: {
+                    id: itemId,
+                    tagId: $("#tagId").val()
+                },
+                success: function (res) {
+
+                    if(res === "ok")
+                        document.location.reload();
+
+                }
+            });
+
+        }
 
         function filter(id) {
 

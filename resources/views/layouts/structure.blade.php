@@ -142,6 +142,14 @@
                         </li>
 
                         <li class="nav-item  ">
+                            <a href="{{route('tags')}}" class="nav-link nav-toggle">
+                                <i class="icon-diamond"></i>
+                                <span class="title">تگ ها</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item  ">
                             <a href="{{route('products')}}" class="nav-link nav-toggle">
                                 <i class="icon-diamond"></i>
                                 <span class="title">محصولات</span>
@@ -153,6 +161,22 @@
                             <a href="{{route('projects')}}" class="nav-link nav-toggle">
                                 <i class="icon-diamond"></i>
                                 <span class="title">پروژه ها</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item  ">
+                            <a href="{{route('services')}}" class="nav-link nav-toggle">
+                                <i class="icon-diamond"></i>
+                                <span class="title">خدمات</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item  ">
+                            <a href="{{route('chats')}}" class="nav-link nav-toggle">
+                                <i class="icon-diamond"></i>
+                                <span class="title">پیام ها</span>
                                 <span class="arrow"></span>
                             </a>
                         </li>

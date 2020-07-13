@@ -2,16 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\models\Chat;
 use App\models\Grade;
+use App\models\Msg;
 use App\models\Product;
 use App\models\ProductAttach;
 use App\models\ProductPic;
+use App\models\ProductTag;
+use App\models\ProductTrailer;
 use App\models\Project;
 use App\models\ProjectAttach;
 use App\models\ProjectBuyers;
 use App\models\ProjectPic;
+use App\models\ProjectTag;
+use App\models\Service;
+use App\models\ServiceBuyer;
+use App\models\ServicePic;
+use App\models\ServiceTag;
+use App\models\Tag;
 use App\models\Transaction;
 use App\models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
@@ -19,6 +30,136 @@ use Illuminate\Support\Facades\URL;
 use ZipArchive;
 
 class OperatorController extends Controller {
+
+    public function services() {
+
+        $services = DB::select("select s.*, g.name as grade from service s, grade g where s.grade_id = g.id order by s.id desc");
+
+        foreach ($services as $service) {
+
+            $tmpPic = ServicePic::whereServiceId($service->id)->first();
+
+            if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/servicePic/' . $tmpPic->name))
+                $service->pic = URL::asset('servicePic/defaultPic.jpg');
+            else
+                $service->pic = URL::asset('servicePic/' . $tmpPic->name);
+
+            $service->date = MiladyToShamsi('', explode('-', explode(' ', $service->created_at)[0]));
+
+            $t = ServiceBuyer::whereServiceId($service->id)->first();
+
+            $service->hide = (!$service->hide) ? "آشکار" : "مخفی";
+
+            if($t == null)
+                $service->buyer = "هنوز خریداری نشده است.";
+            else {
+                $u = User::whereId($t->user_id);
+                $service->buyer = $u->first_name . ' ' . $u->last_name;
+                $service->buyStatus = $t->status;
+            }
+        }
+
+        return view('operator.services', ['services' => $services,
+            'grades' => Grade::all()]);
+    }
+
+    public function doneService() {
+
+        if(isset($_POST["id"])) {
+
+            $buyer = ServiceBuyer::whereServiceId(makeValidInput($_POST["id"]))->whereStatus(false)->first();
+
+            if($buyer != null) {
+
+                try {
+
+                    $user = User::whereId($buyer->user_id);
+                    $service = Service::whereId($buyer->service_id);
+
+                    if($user != null && $service != null) {
+                        $buyer->status = true;
+                        $buyer->save();
+                        $user->stars += $service->star;
+                        $user->save();
+                        echo "ok";
+                        return;
+                    }
+                }
+                catch (\Exception $x) {}
+            }
+        }
+
+        echo "nok";
+    }
+
+    public function addService() {
+
+        if(isset($_POST["name"]) && isset($_POST["description"])
+            && isset($_POST["star"]) && isset($_POST["gradeId"]) && isset($_POST["capacity"])
+        ) {
+
+            $service = new Service();
+            $service->title = makeValidInput($_POST["name"]);
+            $service->description = $_POST["description"];
+            $service->star = makeValidInput($_POST["star"]);
+            $service->grade_id = makeValidInput($_POST["gradeId"]);
+            $service->capacity = makeValidInput($_POST["capacity"]);
+
+            try {
+
+                $service->save();
+
+                if(isset($_FILES["file"]) && !empty($_FILES["file"]["name"])) {
+
+                    $file = Input::file('file');
+                    $Image = time() . '_' . $file->getClientOriginalName();
+                    $destenationpath = public_path() . '/tmp';
+                    $file->move($destenationpath, $Image);
+
+                    $zip = new ZipArchive;
+                    $res = $zip->open($destenationpath . '/' . $Image);
+
+                    if ($res === TRUE) {
+                        $folder = time();
+                        mkdir($destenationpath . '/' . $folder);
+                        $zip->extractTo($destenationpath . '/' . $folder);
+                        $zip->close();
+
+                        $dir = $destenationpath . '/' . $folder;
+                        $q = scandir($dir);
+                        $q = array_diff($q, array('.', '..'));
+                        natsort($q);
+
+                        $vals = [];
+                        foreach ($q as $itr)
+                            $vals[count($vals)] = $itr;
+
+                        $newDest = __DIR__ . '/../../../public/servicePic/';
+
+                        foreach ($vals as $val) {
+                            $tmp = new ServicePic();
+                            $tmp->service_id = $service->id;
+                            $tmp->name = time() . $val;
+                            $tmp->save();
+                            rename($destenationpath . '/' . $folder . '/' . $val,
+                                $newDest . $tmp->name);
+                        }
+
+                        rrmdir($destenationpath . '/' . $folder);
+                        unlink($destenationpath . '/' . $Image);
+
+                    }
+                }
+            }
+            catch (\Exception $x) {
+                dd($x);
+            }
+
+        }
+
+        return Redirect::route('services');
+    }
+
 
     public function projects() {
 
@@ -47,6 +188,8 @@ class OperatorController extends Controller {
 
             $project->hide = (!$project->hide) ? "آشکار" : "مخفی";
 
+            $project->tags = DB::select("select t.name, p.id from tag t, project_tag p where t.id = p.tag_id and p.project_id = " . $project->id);
+
             if($t == null || count($t) == 0)
                 $project->buyers = "هنوز خریداری نشده است.";
             else {
@@ -71,7 +214,100 @@ class OperatorController extends Controller {
 
         }
 
-        return view('operator.projects', ['projects' => $projects, 'grades' => Grade::all()]);
+        return view('operator.projects', ['projects' => $projects,
+            'grades' => Grade::all(), 'tags' => Tag::all()]);
+    }
+
+    public function addTagProject() {
+
+        if(isset($_POST["id"]) && isset($_POST["tagId"])) {
+
+            $tmp = new ProjectTag();
+            $tmp->project_id = makeValidInput($_POST["id"]);
+            $tmp->tag_id = makeValidInput($_POST["tagId"]);
+            try {
+                $tmp->save();
+                echo "ok";
+                return;
+            }
+            catch (\Exception $x) {}
+        }
+
+        echo "nok";
+
+    }
+
+    public function deleteTagProject() {
+
+        if(isset($_POST["id"])) {
+
+            try {
+                ProjectTag::destroy(makeValidInput($_POST["id"]));
+                echo "ok";
+                return;
+            }
+            catch (\Exception $x) {}
+        }
+
+        echo "nok";
+    }
+
+
+    public function chats() {
+
+        DB::delete("delete from chat where created_at < DATE_SUB(NOW(), INTERVAL 6 HOUR)");
+
+        $chats = DB::select("select m.chat_id as id, concat(u.first_name, ' ', u.last_name) as name, count(*) as countNum from chat c, users u, msg m where user_id = " . Auth::user()->id
+            . " and c.created_at > DATE_SUB(NOW(), INTERVAL 6 HOUR) and c.user_id = u.id and c.id = chat_id and seen = false group by(m.chat_id) having countNum > 0");
+
+        return view("chats", ["chats" => $chats]);
+    }
+
+    public function msgs($chatId) {
+
+        $msgs = Msg::whereChatId($chatId)->get();
+        DB::update("update msg set seen = true where chat_id = " . $chatId);
+
+
+        foreach ($msgs as $msg) {
+            $timestamp = strtotime($msg->created_at);
+            $msg->time = MiladyToShamsiTime($timestamp);
+
+            $timestamp = strtotime($msg->created_at);
+            $msg->time = MiladyToShamsiTime($timestamp);
+        }
+
+        return view("msgs", ['msgs' => $msgs, 'chatId' => $chatId]);
+    }
+
+    public function sendRes() {
+
+        if(isset($_POST["msg"]) && isset($_POST["chatId"])) {
+
+            $chat = Chat::whereId(makeValidInput($_POST["chatId"]));
+            if($chat == null) {
+                echo json_encode(["status" => "nok"]);
+                return;
+            }
+
+            $msg = new Msg();
+            $msg->text = makeValidInput($_POST["msg"]);
+            $msg->chat_id = $chat->id;
+            $msg->is_me = false;
+            $msg->seen = true;
+            try {
+                $msg->save();
+                echo json_encode(["status" => "ok", "sendTime" => convertStringToTime(getToday()["time"])]);
+                return;
+            }
+            catch (\Exception $x) {
+                dd($x);
+            }
+
+        }
+
+        echo json_encode(["status" => "nok"]);
+
     }
 
     public function products($err = -1) {
@@ -247,16 +483,17 @@ class OperatorController extends Controller {
             $p->status = 1;
             $p->save();
 
-            $project = new Product();
-            $project->name = makeValidInput($_POST["name"]);
-            $project->description = $_POST["description"];
-            $project->price = makeValidInput($_POST["price"]);
-            $project->star = makeValidInput($_POST["star"]);
-            $project->user_id = $user[0]->id;
+            $product = new Product();
+            $product->name = makeValidInput($_POST["name"]);
+            $product->description = $_POST["description"];
+            $product->price = makeValidInput($_POST["price"]);
+            $product->star = makeValidInput($_POST["star"]);
+            $product->user_id = $user[0]->id;
+            $product->project_id = $project;
 
             try {
 
-                $project->save();
+                $product->save();
 
                 if(isset($_FILES["file"]) && !empty($_FILES["file"]["name"])) {
 
@@ -287,7 +524,7 @@ class OperatorController extends Controller {
 
                         foreach ($vals as $val) {
                             $tmp = new ProductPic();
-                            $tmp->product_id = $project->id;
+                            $tmp->product_id = $product->id;
                             $tmp->name = time() . $val;
                             $tmp->save();
                             rename($destenationpath . '/' . $folder . '/' . $val,
@@ -329,7 +566,49 @@ class OperatorController extends Controller {
 
                         foreach ($vals as $val) {
                             $tmp = new ProductAttach();
-                            $tmp->product_id = $project->id;
+                            $tmp->product_id = $product->id;
+                            $tmp->name = time() . $val;
+                            $tmp->save();
+                            rename($destenationpath . '/' . $folder . '/' . $val,
+                                $newDest . $tmp->name);
+                        }
+
+                        rrmdir($destenationpath . '/' . $folder);
+                        unlink($destenationpath . '/' . $Image);
+
+                    }
+                }
+
+                if(isset($_FILES["trailer"]) && !empty($_FILES["trailer"]["name"])) {
+
+                    $file = Input::file('trailer');
+                    $Image = time() . '_' . $file->getClientOriginalName();
+                    $destenationpath = public_path() . '/tmp';
+                    $file->move($destenationpath, $Image);
+
+                    $zip = new ZipArchive;
+                    $res = $zip->open($destenationpath . '/' . $Image);
+
+                    if ($res === TRUE) {
+                        $folder = time();
+                        mkdir($destenationpath . '/' . $folder);
+                        $zip->extractTo($destenationpath . '/' . $folder);
+                        $zip->close();
+
+                        $dir = $destenationpath . '/' . $folder;
+                        $q = scandir($dir);
+                        $q = array_diff($q, array('.', '..'));
+                        natsort($q);
+
+                        $vals = [];
+                        foreach ($q as $itr)
+                            $vals[count($vals)] = $itr;
+
+                        $newDest = __DIR__ . '/../../../public/productPic/';
+
+                        foreach ($vals as $val) {
+                            $tmp = new ProductTrailer();
+                            $tmp->product_id = $product->id;
                             $tmp->name = time() . $val;
                             $tmp->save();
                             rename($destenationpath . '/' . $folder . '/' . $val,
@@ -423,6 +702,25 @@ class OperatorController extends Controller {
         echo "nok";
     }
 
+    public function toggleHideService() {
+
+        if(isset($_POST["id"])) {
+
+            $p = Service::whereId(makeValidInput($_POST["id"]));
+            if($p != null) {
+                $p->hide = !$p->hide;
+                try {
+                    $p->save();
+                    echo "ok";
+                    return;
+                }
+                catch (\Exception $x) {}
+            }
+        }
+
+        echo "nok";
+    }
+
     public function deleteProduct() {
 
         if(isset($_POST["id"])) {
@@ -443,6 +741,40 @@ class OperatorController extends Controller {
                 foreach ($pics as $pic) {
                     if (file_exists(__DIR__ . '/../../../public/productPic/' . $pic->name))
                         unlink(__DIR__ . '/../../../public/productPic/' . $pic->name);
+                }
+
+                $pics = ProductTrailer::whereProductId($p->id)->get();
+
+                foreach ($pics as $pic) {
+                    if (file_exists(__DIR__ . '/../../../public/productPic/' . $pic->name))
+                        unlink(__DIR__ . '/../../../public/productPic/' . $pic->name);
+                }
+
+                try {
+                    $p->delete();
+                    echo "ok";
+                    return;
+                }
+                catch (\Exception $x) {
+                    dd($x);
+                }
+            }
+        }
+    }
+
+    public function deleteService() {
+
+        if(isset($_POST["id"])) {
+
+            $p = Service::whereId(makeValidInput($_POST["id"]));
+
+            if($p != null) {
+
+                $pics = ServicePic::whereServiceId($p->id)->get();
+
+                foreach ($pics as $pic) {
+                    if (file_exists(__DIR__ . '/../../../public/servicePic/' . $pic->name))
+                        unlink(__DIR__ . '/../../../public/servicePic/' . $pic->name);
                 }
 
                 try {

@@ -14,7 +14,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $name
  * @property string $description
  * @property integer $price
+ * @property integer $project_id
  * @method static \Illuminate\Database\Query\Builder|\App\models\Product whereUserId($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\models\Product whereProjectId($value)
  */
 
 class Product extends Model {

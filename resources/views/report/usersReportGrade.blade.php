@@ -155,6 +155,7 @@
                                 <button id="toggle_{{$user->id}}" onclick="toggleStatus('{{$user->id}}')" class="btn btn-success col-xs-6">فعال کردن کاربر</button>
                             @endif
 
+                            <button onclick="editMoney('{{$user->id}}', '{{$user->money}}', '{{$user->stars}}')" class="btn btn-info col-xs-6">ویرایش سکه/ستاره کاربر</button>
                             <button onclick="document.location.href = '{{route('userBookmarks', ['uId' => $user->id])}}'" class="btn btn-info col-xs-6">اقلام مورد علاقه کاربر</button>
                             <button onclick="document.location.href = '{{route('userBuys', ['uId' => $user->id])}}'" class="btn btn-default col-xs-6">اقلام خریداری شده کاربر</button>
 
@@ -175,6 +176,27 @@
                 <div style="margin-top: 10px">
                     <input type="submit" value="تایید" class="btn green"  style="margin-right: 5%; margin-bottom: 3%">
                     <input type="button" value="انصراف" class="btn green"  style="float: left; margin-bottom: 3%; margin-left: 5%;" onclick="document.getElementById('myAddModal').style.display = 'none'">
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="myMoneyModal" class="modal">
+        <form action="{{route('editMoney')}}" method="post">
+            {{ csrf_field() }}
+            <div class="modal-content">
+
+                <input type="hidden" name="id" id="id">
+
+                <h4 style="padding-right: 5%;">تعداد سکه ها</h4>
+                <input type="number" id="coin" name="coin" required>
+
+                <h4 style="padding-right: 5%;">تعداد ستاره ها</h4>
+                <input type="number" id="star" name="star" required>
+
+                <div style="margin-top: 10px">
+                    <input type="submit" value="تایید" class="btn green"  style="margin-right: 5%; margin-bottom: 3%">
+                    <input type="button" value="انصراف" class="btn green"  style="float: left; margin-bottom: 3%; margin-left: 5%;" onclick="document.getElementById('myMoneyModal').style.display = 'none'">
                 </div>
             </div>
         </form>
@@ -210,6 +232,12 @@
             document.getElementById('oldName').value = name;
         }
 
+        function editMoney(id, coin, star) {
+            document.getElementById('myMoneyModal').style.display = 'block';
+            document.getElementById('id').value = id;
+            document.getElementById('coin').value = coin;
+            document.getElementById('star').value = star;
+        }
     </script>
 
 @stop
