@@ -38,6 +38,8 @@
     left: 12%;
     bottom: 15px;
     color: white;
+    display: flex;
+    align-items: center;
 }
 
 .myNavbar {
