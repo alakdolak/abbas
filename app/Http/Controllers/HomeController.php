@@ -755,4 +755,16 @@ class HomeController extends Controller {
         echo json_encode(["status" => "nok"]);
     }
 
+
+    public function myProjects() {
+        return Redirect::route("profile");
+    }
+
+    public function myProducts() {
+        return Redirect::route("profile");
+    }
+
+    public function myServices() {
+        return Redirect::route("profile");
+    }
 }
