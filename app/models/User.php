@@ -12,7 +12,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property integer $id
  * @property string $first_name
  * @property string $last_name
- * @property string $phone_num
  * @property string $username
  * @property string $password
  * @property string $nid
@@ -25,7 +24,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @method static \Illuminate\Database\Query\Builder|\App\models\User whereNid($value)
  * @method static \Illuminate\Database\Query\Builder|\App\models\User whereLevel($value)
  * @method static \Illuminate\Database\Query\Builder|\App\models\User whereGradeId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\models\User wherePhoneNum($value)
  * @method static \Illuminate\Database\Query\Builder|\App\models\User whereStatus($value)
  */
 

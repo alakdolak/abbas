@@ -129,7 +129,7 @@
             <table style="margin-top: 20px">
                 <tr>
                     <td>نام</td>
-                    <td>شماره تماس</td>
+                    <td>کد ملی</td>
                     <td>وضعیت</td>
                     <td>تعداد خرید</td>
                     <td>ارزش کل خریدها(سکه)</td>
@@ -142,7 +142,7 @@
                     <tr>
 
                         <td>{{$user->first_name . ' ' . $user->last_name}}</td>
-                        <td>{{$user->phone_num}}</td>
+                        <td>{{$user->nid}}</td>
                         <td>{{($user->status) ? "فعال" : "غیرفعال"}}</td>
                         <td>{{$user->buys}}</td>
                         <td>{{$user->sum}}</td>

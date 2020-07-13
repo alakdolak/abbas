@@ -264,7 +264,6 @@ class AdminController extends Controller {
             $tmp->status = true;
             $tmp->nid = $user[4];
             $tmp->grade_id = $gradeId;
-            $tmp->phone_num = $user[5];
 
             try {
                 $tmp->save();
@@ -318,7 +317,6 @@ class AdminController extends Controller {
                             $users[$row - 2][2] = $workSheet->getCell('D' . $row)->getValue();
                             $users[$row - 2][3] = $workSheet->getCell('E' . $row)->getValue();
                             $users[$row - 2][4] = $workSheet->getCell('F' . $row)->getValue();
-                            $users[$row - 2][5] = $workSheet->getCell('G' . $row)->getValue();
                         }
 
                         unlink($path);

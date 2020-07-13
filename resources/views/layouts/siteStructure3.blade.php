@@ -9,6 +9,7 @@
 
 <head>
     @section('header')
+
         <meta content="width=device-width, initial-scale=1" name="viewport" />
         <meta charset="utf-8" />
         <meta name="_token" content="{{ csrf_token() }}"/>
@@ -496,7 +497,7 @@
 
     <div class="header">
 
-        <div class="logoDiv">
+        <div onclick="document.location.href = '{{route('choosePlan')}}'" class="logoDiv">
             <div class="logoPic"></div>
             <div class="logoText"></div>
         </div>

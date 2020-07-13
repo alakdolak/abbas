@@ -314,7 +314,7 @@
             serviceId = sId;
 
             var newElem = "";
-            for(i = star; i > 0; i--) {
+            for(i = star; i >= 0; i--) {
                 newElem += "<option value='" + i + "'>" + i + "</option>";
             }
 
