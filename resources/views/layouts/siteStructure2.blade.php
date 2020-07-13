@@ -28,88 +28,6 @@
         <link rel="stylesheet" href="{{\Illuminate\Support\Facades\URL::asset("css/chatbox.css")}}">
 
 
-        <style>
-            .profileIconBox {
-                padding: 3px;
-                border: 1px solid #ffd568;
-                border-radius: 50%;
-                background-color: #ffd568;
-            }
-            .profileIcon {
-                width: 35px;
-                height: 35px;
-                background-image: url("images/profile.png");
-                background-size: 100%;
-                background-repeat: no-repeat;
-            }
-            .profilePopUp {
-                position: absolute;
-                width: 150px;
-                padding: 10px 15px;
-                background-color: #f2f2f2;
-                border: 5px solid #c5c5c5;
-                border-radius: 7px;
-                margin-top: 20px;
-                left: -5px;
-                cursor: context-menu;
-            }
-            .rightArrowIcon {
-                position: absolute;
-                top: -20px;
-                left: 10%;
-                transform: rotate(180deg);
-                font-size: 2.5em;
-                color: #c5c5c5;
-            }
-            .profileRowPopUp {
-                color: #c5c5c5;
-                padding: 5px 0;
-                border-bottom: 1.5px solid #c5c5c5;
-                text-align: right;
-            }
-            .profilePopUpIconBox {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-            .profilePopUpIcon {
-                width: 22px;
-                height: 22px;
-                background-size: 100%;
-                background-repeat: no-repeat;
-            }
-            .profileName{
-                font-weight: 600;
-                color: #404040 !important;
-            }
-            .coinIcon {
-                background-image: url("{{\Illuminate\Support\Facades\URL::asset("images/coin.png")}}");
-            }
-            .starIcon {
-                background-image: url("{{\Illuminate\Support\Facades\URL::asset("images/star.png")}}");
-            }
-            .profileLogoutBox {
-                display: flex;
-                justify-content: space-around;
-                align-items: center;
-                padding: 5px 0;
-                color: #404040;
-                cursor: pointer;
-            }
-            .logoutIcon {
-                width: 15px;
-                height: 17px;
-                background-image: url("{{\Illuminate\Support\Facades\URL::asset("images/rightArrow.png")}}");
-                background-size: 100%;
-                background-repeat: no-repeat;
-            }
-            .logoutText {
-                font-size: 0.8em;
-                font-weight: 500;
-            }
-        </style>
-
-
     @show
 </head>
 
@@ -167,7 +85,7 @@
 
     <footer class="footer">
         <div class="footerDescript">
-            <div class="footerSlogan">کـارســــــتون، تـجـربـه‌ی یـک کـارآفـریـنـی</div>
+            <div class="footerSlogan">کــارســــــــــــتــون، تــجـــــــربـه‌ی یــک کــارآفــریــنـــــــی</div>
             <div class="footerLinksDiv">
                 <div class="footerLinks">
                     <div class="footerLogo rules"></div>
@@ -176,6 +94,10 @@
                 <div class="footerLinks">
                     <div class="footerLogo contactUs"></div>
                     <div class="footerLogoText">تماس با ما</div>
+                </div>
+                <div class="footerLinks">
+                    <div class="footerLogo FAQ"></div>
+                    <div class="footerLogoText">پرسش و پاسخ متداول</div>
                 </div>
             </div>
         </div>

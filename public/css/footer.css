@@ -3,7 +3,7 @@
     padding: 15px;
     padding-right: 12%;
     padding-left: 12%;
-    margin-top: 100px;
+    margin-top: 50px;
     background-color: #f9f9f9;
     display: flex;
     justify-content: space-between;
@@ -41,6 +41,10 @@
 
 .contactUs {
     background-image: url(../images/contactUs.png);
+}
+
+.FAQ {
+    background-image: url(../images/FAQ.png);
 }
 
 .footerLogoText {
