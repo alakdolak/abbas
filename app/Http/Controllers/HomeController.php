@@ -80,12 +80,10 @@ class HomeController extends Controller {
         }
 
 
+        $myProducts = DB::select("select p.* from product p, project_buyers pb where " .
+            "p.project_id = pb.project_id and pb.status = true and pb.user_id = " . Auth::user()->id);
 
-        $myProducts = DB::select("select p.id, t.status, p.name, concat(u.first_name, ' ', u.last_name) as seller, pb.project_id, p.price, p.star, t.created_at from transactions t, product p, project_buyers pb, users u where " .
-            " u.id = pb.user_id and pb.project_id = p.project_id and " .
-            " t.product_id = p.id and t.user_id = " . Auth::user()->id);
-
-        foreach ($myBuys as $myBuy) {
+        foreach ($myProducts as $myBuy) {
 
             $myBuy->date = MiladyToShamsi('', explode('-', explode(' ', $myBuy->created_at)[0]));
 
@@ -108,7 +106,6 @@ class HomeController extends Controller {
 
 
 
-
         $myServices = DB::select("select s.id, sb.status, sb.star myStar, s.star, s.title from service_buyer sb, service s where " .
             " sb.service_id = s.id and sb.user_id = " . Auth::user()->id);
 
@@ -123,7 +120,8 @@ class HomeController extends Controller {
 
         }
 
-        return view('abbasProfile', ['myBuys' => $myBuys, "myServices" => $myServices]);
+        return view('abbasProfile', ['myBuys' => $myBuys, "myServices" => $myServices,
+            "myProducts" => $myProducts]);
     }
 
     public function faq() {
