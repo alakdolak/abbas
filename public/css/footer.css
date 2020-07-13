@@ -1,7 +1,8 @@
 .footer {
-    width: 76%;
-    margin-right: 12%;
+    width: 100%;
     padding: 15px;
+    padding-right: 12%;
+    padding-left: 12%;
     margin-top: 100px;
     background-color: #f9f9f9;
     display: flex;

@@ -123,8 +123,9 @@
                                 </div>
                             </div>
 
-                            <div onclick="buy()" class="c-product__seller-row c-product__seller-row--add-to-cart"><a class="btn-add-to-cart btn-add-to-cart--full-width js-add-to-cart js-cart-page-add-to-cart js-btn-add-to-cart"><span class="btn-add-to-cart__txt">برعهده گرفتن خدمت</span></a></div>
-
+                            @if($canBuy)
+                                <div onclick="buy()" class="c-product__seller-row c-product__seller-row--add-to-cart"><a class="btn-add-to-cart btn-add-to-cart--full-width js-add-to-cart js-cart-page-add-to-cart js-btn-add-to-cart"><span class="btn-add-to-cart__txt">برعهده گرفتن خدمت</span></a></div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -447,6 +448,10 @@
 
                     else if(res === "nok2") {
                         $("#buyErr").empty().append("این خدمت از قبل برعهده گرفته شده است.");
+                    }
+
+                    else if(res === "nok3") {
+                        $("#buyErr").empty().append("این خدمت را قبلا برعهده گرفته اید.");
                     }
 
                     else if(res === "nok5") {
