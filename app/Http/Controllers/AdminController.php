@@ -27,12 +27,15 @@ class AdminController extends Controller {
     public function doConfig() {
 
         if(isset($_POST["initial_point"]) && isset($_POST["initial_star"]) &&
-            isset($_POST["change_rate"]) && isset($_POST["project_limit"])) {
+            isset($_POST["change_rate"]) && isset($_POST["project_limit"]) &&
+            isset($_POST["rev_change_rate"])
+        ) {
             $tmp = ConfigModel::first();
             $tmp->initial_point = makeValidInput($_POST["initial_point"]);
             $tmp->initial_star = makeValidInput($_POST["initial_star"]);
             $tmp->change_rate = makeValidInput($_POST["change_rate"]);
             $tmp->project_limit = makeValidInput($_POST["project_limit"]);
+            $tmp->rev_change_rate = makeValidInput($_POST["rev_change_rate"]);
             $tmp->save();
         }
 

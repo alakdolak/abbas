@@ -49,12 +49,81 @@ class HomeController extends Controller {
 
     public function profile() {
 
-        if(Auth::user()->level == getValueInfo('adminLevel') ||
-            Auth::user()->level == getValueInfo('operatorLevel')
-        )
-            return view('adminProfile');
+//        if(Auth::user()->level == getValueInfo('adminLevel') ||
+//            Auth::user()->level == getValueInfo('operatorLevel')
+//        )
+//            return view('adminProfile');
 
-        return view('profile');
+        $myBuys = DB::select("select p.id, t.status, p.name, concat(u.first_name, ' ', u.last_name) as seller, pb.project_id, p.price, p.star, t.created_at from transactions t, product p, project_buyers pb, users u where " .
+            " u.id = pb.user_id and pb.project_id = p.project_id and " .
+            " t.product_id = p.id and t.user_id = " . Auth::user()->id);
+
+        foreach ($myBuys as $myBuy) {
+
+            $myBuy->date = MiladyToShamsi('', explode('-', explode(' ', $myBuy->created_at)[0]));
+
+            $tags = DB::select("select t.name, t.id from tag t, project_tag p where t.id = p.tag_id and p.project_id = " . $myBuy->project_id);
+
+            $str = "-";
+            foreach ($tags as $tag)
+                $str .= $tag->id . '-';
+
+            $myBuy->tagStr = $str;
+
+            $tmpPic = ProductPic::whereProductId($myBuy->id)->first();
+
+            if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/productPic/' . $tmpPic->name))
+                $myBuy->pic = URL::asset('productPic/defaultPic.jpg');
+            else
+                $myBuy->pic = URL::asset('productPic/' . $tmpPic->name);
+
+        }
+
+
+
+        $myProducts = DB::select("select p.id, t.status, p.name, concat(u.first_name, ' ', u.last_name) as seller, pb.project_id, p.price, p.star, t.created_at from transactions t, product p, project_buyers pb, users u where " .
+            " u.id = pb.user_id and pb.project_id = p.project_id and " .
+            " t.product_id = p.id and t.user_id = " . Auth::user()->id);
+
+        foreach ($myBuys as $myBuy) {
+
+            $myBuy->date = MiladyToShamsi('', explode('-', explode(' ', $myBuy->created_at)[0]));
+
+            $tags = DB::select("select t.name, t.id from tag t, project_tag p where t.id = p.tag_id and p.project_id = " . $myBuy->project_id);
+
+            $str = "-";
+            foreach ($tags as $tag)
+                $str .= $tag->id . '-';
+
+            $myBuy->tagStr = $str;
+
+            $tmpPic = ProductPic::whereProductId($myBuy->id)->first();
+
+            if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/productPic/' . $tmpPic->name))
+                $myBuy->pic = URL::asset('productPic/defaultPic.jpg');
+            else
+                $myBuy->pic = URL::asset('productPic/' . $tmpPic->name);
+
+        }
+
+
+
+
+        $myServices = DB::select("select s.id, sb.status, sb.star myStar, s.star, s.title from service_buyer sb, service s where " .
+            " sb.service_id = s.id and sb.user_id = " . Auth::user()->id);
+
+        foreach ($myServices as $myService) {
+
+            $tmpPic = ServicePic::whereServiceId($myService->id)->first();
+
+            if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/servicePic/' . $tmpPic->name))
+                $myService->pic = URL::asset('servicePic/defaultPic.jpg');
+            else
+                $myService->pic = URL::asset('servicePic/' . $tmpPic->name);
+
+        }
+
+        return view('abbasProfile', ['myBuys' => $myBuys, "myServices" => $myServices]);
     }
 
     public function faq() {

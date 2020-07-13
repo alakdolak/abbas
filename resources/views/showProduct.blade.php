@@ -147,11 +147,11 @@
                                 </div>
                             </div>
 
-                            <div class="c-product__seller-row c-product__seller-row--add-to-cart"><a class="btn-add-to-cart btn-add-to-cart--full-width js-add-to-cart js-cart-page-add-to-cart js-btn-add-to-cart" data-variant="9236485" href="/cart/add/9236485/1/" data-event="add_to_cart" data-event-category="ecommerce" data-event-label="price: 64000000 - seller: marketplace - seller_name: آواژنگ - seller_rating: 85 - multiple_configs: True - position: 0"><span class="btn-add-to-cart__txt">افزودن به سبد خرید</span></a>
+                            <div onclick="buy()" class="c-product__seller-row c-product__seller-row--add-to-cart"><a class="btn-add-to-cart btn-add-to-cart--full-width js-add-to-cart js-cart-page-add-to-cart js-btn-add-to-cart"><span class="btn-add-to-cart__txt">خرید محصول</span></a>
                                 <div class="c-product__seller-digiclub">
                                     <div class="c-product__engagement-rating"></div>
                                     <div>
-                                        <span>{{$product->price}}</span>
+                                        <span>{{$product->star}}</span>
                                         ستاره بعد از خرید کالا
                                     </div>
                                 </div>
@@ -176,9 +176,9 @@
                     <li>
                         <button id="add-to-favorite-button" class="btn-option btn-option--wishes"></button><span class="c-tooltip c-tooltip--left c-tooltip--short 	glyphicon glyphicon-heart-empty">افزودن به علاقه&zwnj;مندی</span>
                     </li>
-                    <li>
-                        <button id="add-to-bookmark-button" class="btn-option btn-option--wishes"></button><span class="c-tooltip c-tooltip--left c-tooltip--short glyphicon glyphicon-heart-empty">افزودن به نشان</span>
-                    </li>
+{{--                    <li>--}}
+{{--                        <button id="add-to-bookmark-button" class="btn-option btn-option--wishes"></button><span class="c-tooltip c-tooltip--left c-tooltip--short glyphicon glyphicon-heart-empty">افزودن به نشان</span>--}}
+{{--                    </li>--}}
                 </ul>
 
                 <div class="c-gallery__img">
