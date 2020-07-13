@@ -322,16 +322,83 @@
 
     </style>
 
+    <style>
+        .banner {
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+        .bannerGrayBox {
+            width: 83%;
+            height: 200px;
+            background-color: #f9f9f9;
+            position: absolute;
+            z-index: 1;
+        }
+        .bannerBorderBox {
+            width: 78%;
+            height: 210px;
+            position: absolute;
+            top: 30px;
+            z-index: 10;
+        }
+        .bannerLightRedBox {
+            background-color: lightcoral;
+        }
+        .bannerLightBlueBox {
+            background-color: lightblue;
+        }
+        .bannerLightGreenBox {
+            background-color: lightgreen;
+        }
+        .bannerMainBox {
+            width: 76%;
+            height: 220px;
+            position: absolute;
+            top: 40px;
+            z-index: 20;
+            background-color: #f15b47;
+            background-size: 64%;
+            background-repeat: no-repeat;
+        }
+        .projectsBanner {
+            background-image: url("{{URL::asset('images/projectsBanner.png')}}");
+        }
+        .servicesBanner {
+            background-image: url("{{URL::asset('images/servicesBanner.png')}}");
+        }
+        .productsBanner {
+            background-image: url("{{URL::asset('images/productsBanner.png')}}");
+        }
+        .bannerText {
+            font-size: 3em;
+            font-weight: 700;
+            color: white;
+            position: absolute;
+            bottom: 20%;
+            right: 10%;
+        }
+    </style>
+
 @stop
 
 @section("content")
 
-    <center style="margin: 40px;">
-        <button id="allTags" class="tagFilter selectedTag" data-status="1" data-filter="-1">همه</button>
+    <div class="banner">
+        <div class="bannerGrayBox"></div>
+        <div class="bannerBorderBox bannerLightRedBox"></div>
+        <div class="bannerMainBox projectsBanner">
+            <div class="bannerText">انتخاب پروژه‌ها</div>
+        </div>
+    </div>
+
+    <div style="margin: 100px 12% 25px; text-align: center;">
+        <button id="allTags" class="tagFilter selectedTag" data-status="1" data-filter="-1">همه موارد</button>
         @foreach($tags as $tag)
             <button data-status="0" class="tagFilter" data-filter="{{$tag->id}}">{{$tag->name}}</button>
         @endforeach
-    </center>
+    </div>
 
     <div class="c-swiper-specials firstWeek">
         <section class="container container--home" id="sn-carousels-incredible-offer">
