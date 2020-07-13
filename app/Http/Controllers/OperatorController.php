@@ -31,6 +31,40 @@ use ZipArchive;
 
 class OperatorController extends Controller {
 
+
+    public function doneService() {
+
+        if(isset($_POST["id"]) && isset($_POST["star"]) && isset($_POST["user_id"])) {
+
+            $buyer = ServiceBuyer::whereServiceId(makeValidInput($_POST["id"]))->whereUserId(makeValidInput($_POST["user_id"]))->whereStatus(false)->first();
+
+            if($buyer != null) {
+
+                try {
+
+                    $user = User::whereId($buyer->user_id);
+                    $star = makeValidInput($_POST["star"]);
+
+                    if($user != null) {
+                        $buyer->star = $star;
+                        $buyer->status = true;
+                        $buyer->save();
+                        $user->stars += $star;
+                        $user->save();
+                        echo "ok";
+                        return;
+                    }
+                }
+                catch (\Exception $x) {}
+            }
+        }
+
+        echo "nok";
+    }
+
+
+
+
     public function services() {
 
         $services = DB::select("select s.*, g.name as grade from service s, grade g where s.grade_id = g.id order by s.id desc");
@@ -46,16 +80,24 @@ class OperatorController extends Controller {
 
             $service->date = MiladyToShamsi('', explode('-', explode(' ', $service->created_at)[0]));
 
-            $t = ServiceBuyer::whereServiceId($service->id)->first();
+            $t = ServiceBuyer::whereServiceId($service->id)->get();
 
             $service->hide = (!$service->hide) ? "آشکار" : "مخفی";
 
             if($t == null)
-                $service->buyer = "هنوز خریداری نشده است.";
+                $service->buyers = null;
             else {
-                $u = User::whereId($t->user_id);
-                $service->buyer = $u->first_name . ' ' . $u->last_name;
-                $service->buyStatus = $t->status;
+
+                $service->buyers = [];
+
+                foreach ($t as $itr) {
+                    $u = User::whereId($itr->user_id);
+                    $service->buyers[count($service->buyers)] =
+                        ["name" => $u->first_name . ' ' . $u->last_name,
+                        "id" => $u->id,
+                        "status" => $itr->status,
+                        "star" => $itr->star];
+                }
             }
         }
 
@@ -63,34 +105,201 @@ class OperatorController extends Controller {
             'grades' => Grade::all()]);
     }
 
-    public function doneService() {
+    public function products($err = -1) {
+
+        $products = DB::select("select p.*, g.name as grade, g.id as grade_id, concat(u.first_name, ' ', u.last_name) as owner from product p, users u, grade g where p.user_id = u.id and u.grade_id = g.id order by p.id desc");
+
+        foreach ($products as $product) {
+
+            $tmpPic = ProductPic::whereProductId($product->id)->first();
+
+            if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/productPic/' . $tmpPic->name))
+                $product->pic = URL::asset('productPic/defaultPic.jpg');
+            else
+                $product->pic = URL::asset('productPic/' . $tmpPic->name);
+
+            $product->date = MiladyToShamsi('', explode('-', explode(' ', $product->created_at)[0]));
+
+            $t = Transaction::whereProductId($product->id)->select('user_id')->get();
+
+            if($product->price == 0)
+                $product->price = "رایگان";
+            else
+                $product->price = number_format($product->price);
+
+            $product->hide = (!$product->hide) ? "آشکار" : "مخفی";
+
+            if($t == null || count($t) == 0)
+                $product->buyer = "هنوز خریداری نشده است.";
+            else {
+                $u = User::whereId($t[0]->user_id);
+                $product->buyer = $u->first_name . ' ' . $u->last_name;
+            }
+
+        }
+
+        return view('operator.products', ['products' => $products, 'grades' => Grade::all(),
+            'err' => $err]);
+    }
+
+    public function projects() {
+
+        $projects = DB::select("select p.*, g.name as grade from project p, grade g where p.grade_id = g.id order by p.id desc");
+
+        foreach ($projects as $project) {
+
+            $tmpPic = ProjectPic::whereProjectId($project->id)->first();
+
+            if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/projectPic/' . $tmpPic->name))
+                $project->pic = URL::asset('projectPic/defaultPic.jpg');
+            else
+                $project->pic = URL::asset('projectPic/' . $tmpPic->name);
+
+            $project->date = MiladyToShamsi('', explode('-', explode(' ', $project->created_at)[0]));
+
+            $t = ProjectBuyers::whereProjectId($project->id)->select('user_id')->get();
+
+            if($project->price == 0)
+                $project->price = "رایگان";
+            else
+                $project->price = number_format($project->price);
+
+            $project->startReg = convertStringToDate($project->start_reg);
+            $project->endReg = convertStringToDate($project->end_reg);
+
+            $project->hide = (!$project->hide) ? "آشکار" : "مخفی";
+
+            $project->tags = DB::select("select t.name, p.id from tag t, project_tag p where t.id = p.tag_id and p.project_id = " . $project->id);
+
+            if($t == null || count($t) == 0)
+                $project->buyers = "هنوز خریداری نشده است.";
+            else {
+
+                $str = "";
+                $first = true;
+
+                foreach ($t as $itr) {
+                    $u = User::whereId($itr->user_id);
+                    if($first) {
+                        $str .= $u->first_name . ' ' . $u->last_name;
+                        $first = false;
+                    }
+                    else {
+                        $str .= " - " . $u->first_name . ' ' . $u->last_name;
+                    }
+                }
+
+
+                $project->buyers = $str;
+            }
+
+        }
+
+        return view('operator.projects', ['projects' => $projects,
+            'grades' => Grade::all(), 'tags' => Tag::all()]);
+    }
+
+
+
+
+
+    public function addTagProject() {
+
+        if(isset($_POST["id"]) && isset($_POST["tagId"])) {
+
+            $tmp = new ProjectTag();
+            $tmp->project_id = makeValidInput($_POST["id"]);
+            $tmp->tag_id = makeValidInput($_POST["tagId"]);
+            try {
+                $tmp->save();
+                echo "ok";
+                return;
+            }
+            catch (\Exception $x) {}
+        }
+
+        echo "nok";
+
+    }
+
+    public function deleteTagProject() {
 
         if(isset($_POST["id"])) {
 
-            $buyer = ServiceBuyer::whereServiceId(makeValidInput($_POST["id"]))->whereStatus(false)->first();
-
-            if($buyer != null) {
-
-                try {
-
-                    $user = User::whereId($buyer->user_id);
-                    $service = Service::whereId($buyer->service_id);
-
-                    if($user != null && $service != null) {
-                        $buyer->status = true;
-                        $buyer->save();
-                        $user->stars += $service->star;
-                        $user->save();
-                        echo "ok";
-                        return;
-                    }
-                }
-                catch (\Exception $x) {}
+            try {
+                ProjectTag::destroy(makeValidInput($_POST["id"]));
+                echo "ok";
+                return;
             }
+            catch (\Exception $x) {}
         }
 
         echo "nok";
     }
+
+
+
+
+    public function chats() {
+
+        DB::delete("delete from chat where created_at < DATE_SUB(NOW(), INTERVAL 6 HOUR)");
+
+        $chats = DB::select("select m.chat_id as id, concat(u.first_name, ' ', u.last_name) as name, count(*) as countNum from chat c, users u, msg m where user_id = " . Auth::user()->id
+            . " and c.created_at > DATE_SUB(NOW(), INTERVAL 6 HOUR) and c.user_id = u.id and c.id = chat_id and seen = false group by(m.chat_id) having countNum > 0");
+
+        return view("chats", ["chats" => $chats]);
+    }
+
+    public function msgs($chatId) {
+
+        $msgs = Msg::whereChatId($chatId)->get();
+        DB::update("update msg set seen = true where chat_id = " . $chatId);
+
+
+        foreach ($msgs as $msg) {
+            $timestamp = strtotime($msg->created_at);
+            $msg->time = MiladyToShamsiTime($timestamp);
+
+            $timestamp = strtotime($msg->created_at);
+            $msg->time = MiladyToShamsiTime($timestamp);
+        }
+
+        return view("msgs", ['msgs' => $msgs, 'chatId' => $chatId]);
+    }
+
+    public function sendRes() {
+
+        if(isset($_POST["msg"]) && isset($_POST["chatId"])) {
+
+            $chat = Chat::whereId(makeValidInput($_POST["chatId"]));
+            if($chat == null) {
+                echo json_encode(["status" => "nok"]);
+                return;
+            }
+
+            $msg = new Msg();
+            $msg->text = makeValidInput($_POST["msg"]);
+            $msg->chat_id = $chat->id;
+            $msg->is_me = false;
+            $msg->seen = true;
+            try {
+                $msg->save();
+                echo json_encode(["status" => "ok", "sendTime" => convertStringToTime(getToday()["time"])]);
+                return;
+            }
+            catch (\Exception $x) {
+                dd($x);
+            }
+
+        }
+
+        echo json_encode(["status" => "nok"]);
+
+    }
+
+
+
+
 
     public function addService() {
 
@@ -158,193 +367,6 @@ class OperatorController extends Controller {
         }
 
         return Redirect::route('services');
-    }
-
-
-    public function projects() {
-
-        $projects = DB::select("select p.*, g.name as grade from project p, grade g where p.grade_id = g.id order by p.id desc");
-
-        foreach ($projects as $project) {
-
-            $tmpPic = ProjectPic::whereProjectId($project->id)->first();
-
-            if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/projectPic/' . $tmpPic->name))
-                $project->pic = URL::asset('projectPic/defaultPic.jpg');
-            else
-                $project->pic = URL::asset('projectPic/' . $tmpPic->name);
-
-            $project->date = MiladyToShamsi('', explode('-', explode(' ', $project->created_at)[0]));
-
-            $t = ProjectBuyers::whereProjectId($project->id)->select('user_id')->get();
-
-            if($project->price == 0)
-                $project->price = "رایگان";
-            else
-                $project->price = number_format($project->price);
-
-            $project->startReg = convertStringToDate($project->start_reg);
-            $project->endReg = convertStringToDate($project->end_reg);
-
-            $project->hide = (!$project->hide) ? "آشکار" : "مخفی";
-
-            $project->tags = DB::select("select t.name, p.id from tag t, project_tag p where t.id = p.tag_id and p.project_id = " . $project->id);
-
-            if($t == null || count($t) == 0)
-                $project->buyers = "هنوز خریداری نشده است.";
-            else {
-
-                $str = "";
-                $first = true;
-
-                foreach ($t as $itr) {
-                    $u = User::whereId($itr->user_id);
-                    if($first) {
-                        $str .= $u->first_name . ' ' . $u->last_name;
-                        $first = false;
-                    }
-                    else {
-                        $str .= " - " . $u->first_name . ' ' . $u->last_name;
-                    }
-                }
-
-
-                $project->buyers = $str;
-            }
-
-        }
-
-        return view('operator.projects', ['projects' => $projects,
-            'grades' => Grade::all(), 'tags' => Tag::all()]);
-    }
-
-    public function addTagProject() {
-
-        if(isset($_POST["id"]) && isset($_POST["tagId"])) {
-
-            $tmp = new ProjectTag();
-            $tmp->project_id = makeValidInput($_POST["id"]);
-            $tmp->tag_id = makeValidInput($_POST["tagId"]);
-            try {
-                $tmp->save();
-                echo "ok";
-                return;
-            }
-            catch (\Exception $x) {}
-        }
-
-        echo "nok";
-
-    }
-
-    public function deleteTagProject() {
-
-        if(isset($_POST["id"])) {
-
-            try {
-                ProjectTag::destroy(makeValidInput($_POST["id"]));
-                echo "ok";
-                return;
-            }
-            catch (\Exception $x) {}
-        }
-
-        echo "nok";
-    }
-
-
-    public function chats() {
-
-        DB::delete("delete from chat where created_at < DATE_SUB(NOW(), INTERVAL 6 HOUR)");
-
-        $chats = DB::select("select m.chat_id as id, concat(u.first_name, ' ', u.last_name) as name, count(*) as countNum from chat c, users u, msg m where user_id = " . Auth::user()->id
-            . " and c.created_at > DATE_SUB(NOW(), INTERVAL 6 HOUR) and c.user_id = u.id and c.id = chat_id and seen = false group by(m.chat_id) having countNum > 0");
-
-        return view("chats", ["chats" => $chats]);
-    }
-
-    public function msgs($chatId) {
-
-        $msgs = Msg::whereChatId($chatId)->get();
-        DB::update("update msg set seen = true where chat_id = " . $chatId);
-
-
-        foreach ($msgs as $msg) {
-            $timestamp = strtotime($msg->created_at);
-            $msg->time = MiladyToShamsiTime($timestamp);
-
-            $timestamp = strtotime($msg->created_at);
-            $msg->time = MiladyToShamsiTime($timestamp);
-        }
-
-        return view("msgs", ['msgs' => $msgs, 'chatId' => $chatId]);
-    }
-
-    public function sendRes() {
-
-        if(isset($_POST["msg"]) && isset($_POST["chatId"])) {
-
-            $chat = Chat::whereId(makeValidInput($_POST["chatId"]));
-            if($chat == null) {
-                echo json_encode(["status" => "nok"]);
-                return;
-            }
-
-            $msg = new Msg();
-            $msg->text = makeValidInput($_POST["msg"]);
-            $msg->chat_id = $chat->id;
-            $msg->is_me = false;
-            $msg->seen = true;
-            try {
-                $msg->save();
-                echo json_encode(["status" => "ok", "sendTime" => convertStringToTime(getToday()["time"])]);
-                return;
-            }
-            catch (\Exception $x) {
-                dd($x);
-            }
-
-        }
-
-        echo json_encode(["status" => "nok"]);
-
-    }
-
-    public function products($err = -1) {
-
-        $products = DB::select("select p.*, g.name as grade, g.id as grade_id, concat(u.first_name, ' ', u.last_name) as owner from product p, users u, grade g where p.user_id = u.id and u.grade_id = g.id order by p.id desc");
-
-        foreach ($products as $product) {
-
-            $tmpPic = ProductPic::whereProductId($product->id)->first();
-
-            if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/productPic/' . $tmpPic->name))
-                $product->pic = URL::asset('productPic/defaultPic.jpg');
-            else
-                $product->pic = URL::asset('productPic/' . $tmpPic->name);
-
-            $product->date = MiladyToShamsi('', explode('-', explode(' ', $product->created_at)[0]));
-
-            $t = Transaction::whereProductId($product->id)->select('user_id')->get();
-
-            if($product->price == 0)
-                $product->price = "رایگان";
-            else
-                $product->price = number_format($product->price);
-
-            $product->hide = (!$product->hide) ? "آشکار" : "مخفی";
-
-            if($t == null || count($t) == 0)
-                $product->buyer = "هنوز خریداری نشده است.";
-            else {
-                $u = User::whereId($t[0]->user_id);
-                $product->buyer = $u->first_name . ' ' . $u->last_name;
-            }
-
-        }
-
-        return view('operator.products', ['products' => $products, 'grades' => Grade::all(),
-            'err' => $err]);
     }
 
     public function addProject() {
@@ -630,39 +652,7 @@ class OperatorController extends Controller {
         return Redirect::route('products');
     }
 
-    public function deleteProject() {
 
-        if(isset($_POST["id"])) {
-
-            $p = Project::whereId(makeValidInput($_POST["id"]));
-
-            if($p != null) {
-
-                $pics = ProjectPic::whereProjectId($p->id)->get();
-                foreach ($pics as $pic) {
-                    if (file_exists(__DIR__ . '/../../../public/projectPic/' . $pic->name))
-                        unlink(__DIR__ . '/../../../public/projectPic/' . $pic->name);
-                }
-
-                $pics = ProjectAttach::whereProjectId($p->id)->get();
-                foreach ($pics as $pic) {
-                    if (file_exists(__DIR__ . '/../../../public/projectPic/' . $pic->name))
-                        unlink(__DIR__ . '/../../../public/projectPic/' . $pic->name);
-                }
-
-                try {
-                    $p->delete();
-                    echo "ok";
-                    return;
-                }
-                catch (\Exception $x) {
-                    dd($x);
-                }
-            }
-        }
-
-        echo "nok";
-    }
 
     public function toggleHideProject() {
 
@@ -715,6 +705,42 @@ class OperatorController extends Controller {
                     return;
                 }
                 catch (\Exception $x) {}
+            }
+        }
+
+        echo "nok";
+    }
+
+
+
+    public function deleteProject() {
+
+        if(isset($_POST["id"])) {
+
+            $p = Project::whereId(makeValidInput($_POST["id"]));
+
+            if($p != null) {
+
+                $pics = ProjectPic::whereProjectId($p->id)->get();
+                foreach ($pics as $pic) {
+                    if (file_exists(__DIR__ . '/../../../public/projectPic/' . $pic->name))
+                        unlink(__DIR__ . '/../../../public/projectPic/' . $pic->name);
+                }
+
+                $pics = ProjectAttach::whereProjectId($p->id)->get();
+                foreach ($pics as $pic) {
+                    if (file_exists(__DIR__ . '/../../../public/projectPic/' . $pic->name))
+                        unlink(__DIR__ . '/../../../public/projectPic/' . $pic->name);
+                }
+
+                try {
+                    $p->delete();
+                    echo "ok";
+                    return;
+                }
+                catch (\Exception $x) {
+                    dd($x);
+                }
             }
         }
 
@@ -788,6 +814,9 @@ class OperatorController extends Controller {
             }
         }
     }
+
+
+
 
     public function getOpenProject() {
 

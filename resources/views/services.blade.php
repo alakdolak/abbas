@@ -272,46 +272,6 @@
             object-fit: contain;
         }
 
-        #chat-bot-launcher-container.chat-bot-launcher-enabled #chat-bot-launcher {
-            visibility: visible !important;
-            animation: launcher-frame-appear 0.25s ease forwards;
-        }
-
-        #chat-bot-launcher-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            direction: ltr !important;
-            z-index: 2147482999;
-        }
-
-        #chat-bot-launcher-container .chat-bot-launcher {
-            font-family: "Open Sans",sans-serif;
-            height: 42px;
-            visibility: hidden;
-            -webkit-transform: translateZ(0);
-            border-radius: 5em;
-            cursor: pointer;
-            padding: 0px 20px;
-            -webkit-transition: -webkit-transform .15s ease-in-out, box-shadow .15s ease-in-out!important;
-            -moz-transition: -moz-transform .15s ease-in-out, box-shadow .15s ease-in-out!important;
-            -o-transition: -o-transform .15s ease-in-out, box-shadow .15s ease-in-out!important;
-            transition: transform .15s ease-in-out, box-shadow .15s ease-in-out!important;
-        }
-
-        .chat-bot-flex-center {
-            justify-content: center;
-        }
-
-        .chat-bot-flex-center, .chat-bot-flex-end {
-            display: -webkit-box;
-            display: -webkit-flex;
-            display: -moz-box;
-            display: -ms-flexbox;
-            display: flex;
-            align-items: center;
-        }
-
         .container {
             width: 100% !important;
         }
@@ -397,6 +357,9 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <div><span class="c-price__currency">ظرفیت کل:</span><span>&nbsp;</span>{{$service->capacity}}</div>
+                                            <div> <span class="c-price__currency">ظرفیت باقی مانده:</span><span>&nbsp;</span>{{$service->reminder}}</div>
                                         </div>
                                     </li>
                                 </div>

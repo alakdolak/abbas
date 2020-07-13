@@ -68,6 +68,8 @@ class HomeController extends Controller {
         return view('FAQ', ['categories' => $categories]);
     }
 
+
+
     public function login() {
         return view('home');
     }
@@ -110,11 +112,12 @@ class HomeController extends Controller {
     }
 
 
+
     public function showAllServices() {
 
         $grade = Auth::user()->grade_id;
 
-        $services = DB::select('select id, title, description, star from service where grade_id = ' . $grade .
+        $services = DB::select('select id, title, description, star, capacity from service where grade_id = ' . $grade .
             ' and hide = false order by id desc');
 
         foreach ($services as $service) {
@@ -127,6 +130,7 @@ class HomeController extends Controller {
                 $service->pic = URL::asset('servicePic/' . $tmpPic->name);
 
             $service->likes = Likes::whereItemId($service->id)->whereMode(getValueInfo('serviceMode'))->count();
+            $service->reminder = $service->capacity - ServiceBuyer::whereServiceId($service->id)->count();
         }
 
         return view('services', ['services' => $services]);
@@ -159,7 +163,9 @@ class HomeController extends Controller {
 
         $canBuy = true;
 
-        if(ServiceBuyer::whereServiceId($id)->count() > 0)
+        if(ServiceBuyer::whereServiceId($id)->count() == $service->capacity ||
+            ServiceBuyer::whereServiceId($id)->whereUserId(Auth::user()->id)->count() > 0
+        )
             $canBuy = false;
 
         return view('showService', ['bookmark' => $bookmark, 'canBuy' => $canBuy,
@@ -637,8 +643,13 @@ class HomeController extends Controller {
                 return;
             }
 
-            if(ServiceBuyer::whereServiceId($service->id)->count() > 0) {
+            if(ServiceBuyer::whereServiceId($service->id)->count() == $service->capacity) {
                 echo "nok2";
+                return;
+            }
+
+            if(ServiceBuyer::whereServiceId($service->id)->whereUserId($user->id)->count() > 0) {
+                echo "nok3";
                 return;
             }
 

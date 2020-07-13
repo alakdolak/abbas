@@ -111,6 +111,10 @@
         th, td {
             text-align: right;
         }
+
+        .bigTd {
+            width: 320px !important;
+        }
     </style>
 
     <script src="//cdn.ckeditor.com/4.10.1/full/ckeditor.js"></script>
@@ -163,7 +167,7 @@
                                 <th scope="col" style="width:450px !important">توضیح</th>
                                 <th scope="col">تعداد ستاره ها</th>
                                 <th scope="col">تاریخ تعریف خدمت</th>
-                                <th scope="col">خریدار</th>
+                                <th class="bigTd" scope="col">خریدار</th>
                                 <th scope="col">وضعیت نمایش</th>
                                 <th scope="col">عملیات</th>
                             </tr>
@@ -181,7 +185,27 @@
                                     <td>{!! html_entity_decode($itr->description) !!}</td>
                                     <td>{{$itr->star}}</td>
                                     <td>{{$itr->date}}</td>
-                                    <td>{{$itr->buyer}}</td>
+                                    <td class="bigTd">
+                                        @if($itr->buyers == null)
+                                            هنوز خریداری نشده است.
+                                        @else
+                                            @foreach($itr->buyers as $buyer)
+                                                <div style="padding: 4px; margin: 4px; border: 1px dotted black; border-radius: 7px;">
+                                                    <p>{{$buyer["name"]}}</p>
+                                                    <p>
+                                                        <span>وضعیت انجام: </span><span>&nbsp;</span><span>{{($buyer["status"]) ? "انجام شده" : "انجام نشده"}}</span>
+                                                    </p>
+                                                    @if($buyer["status"])
+                                                        <p>
+                                                            <span>تعداد ستاره های داده شده: </span><span>&nbsp;</span><span>{{$buyer["star"]}}</span>
+                                                        </p>
+                                                    @else
+                                                        <button onclick="confirmJob('{{$itr->star}}', '{{$buyer["id"]}}', '{{$itr->id}}')" class="btn btn-default">تاییده انجام کار</button>
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    </td>
                                     <td>{{$itr->hide}}</td>
                                     <td>
                                         <button onclick="removeService('{{$itr->id}}')" class="btn btn-danger" data-toggle="tooltip" title="حذف">
@@ -194,9 +218,6 @@
 
                                         <button class="btn btn-warning" onclick="toggleHide('{{$itr->id}}')"><span>تغییر وضعیت نمایش</span></button>
 
-                                        @if($itr->buyer != "هنوز خریداری نشده است." && !$itr->buyStatus)
-                                            <button class="btn btn-default" onclick="done('{{$itr->id}}')"><span>تاییده انجام کار</span></button>
-                                        @endif
                                     </td>
                                 </tr>
                                 <?php $i += 1; ?>
@@ -251,6 +272,26 @@
         </form>
     </div>
 
+    <div id="myConfirmModal" class="modal">
+
+
+        <div class="modal-content">
+
+            <center>
+
+                <h5 style="padding-right: 5%;">تعداد ستاره مدنظر</h5>
+                <select id="starOptions"></select>
+
+            </center>
+
+            <div style="margin-top: 20px">
+                <input onclick="done()" type="submit" value="افزودن" class="btn green"  style="margin-right: 5%; margin-bottom: 3%">
+                <input type="button" value="انصراف" class="btn green"  style="float: left; margin-bottom: 3%; margin-left: 5%;" onclick="document.getElementById('myConfirmModal').style.display = 'none'">
+            </div>
+        </div>
+
+    </div>
+
     <script>
 
         function filter(id) {
@@ -265,13 +306,30 @@
 
         }
 
+        var userId, serviceId;
+
+        function confirmJob(star, uId, sId) {
+
+            userId = uId;
+            serviceId = sId;
+
+            var newElem = "";
+            for(i = star; i > 0; i--) {
+                newElem += "<option value='" + i + "'>" + i + "</option>";
+            }
+
+            $("#starOptions").empty().append(newElem);
+
+            document.getElementById('myConfirmModal').style.display = 'block';
+        }
+
         CKEDITOR.replace('editor1');
 
         function addService() {
             document.getElementById('myAddModal').style.display = 'block';
         }
 
-        function done(id) {
+        function done() {
 
             $.ajax({
                 type: 'post',
@@ -280,11 +338,15 @@
                 },
                 url: '{{route('doneService')}}',
                 data: {
-                    id: id
+                    id: serviceId,
+                    star: $("#starOptions").val(),
+                    user_id: userId
                 },
                 success: function (res) {
-                    if(res == "ok")
+                    if(res == "ok") {
                         alert("عملیات مورد نظر با موفقیت انجام پذیرفت.");
+                        document.getElementById('myConfirmModal').style.display = 'none';
+                    }
                 }
             });
 

@@ -33,15 +33,17 @@
 <body style="font-family: IRANSans; direction: rtl">
 
     <div class="header">
+
         <div class="logoDiv">
             <div class="logoPic"></div>
             <div class="logoText"></div>
         </div>
-        <div class="nav">
-            <div onclick="document.location.href = '{{route('showAllProjects')}}'" class="navbar">معرفی پروژه‌ها</div>
-            <div onclick="document.location.href = '{{route('showAllServices')}}'" class="navbar">پروژه‌های خدماتی</div>
-            <div onclick="document.location.href = '{{route('showAllProducts')}}'" class="navbar">معرفی محصولات</div>
-            <div class="navbar">پروفایل</div>
+
+        <div class="myNav">
+            <div onclick="document.location.href = '{{route('showAllProjects')}}'" class="myNavbar">معرفی پروژه‌ها</div>
+            <div onclick="document.location.href = '{{route('showAllServices')}}'" class="myNavbar">پروژه‌های خدماتی</div>
+            <div onclick="document.location.href = '{{route('showAllProducts')}}'" class="myNavbar">معرفی محصولات</div>
+            <div class="myNavbar">پروفایل</div>
         </div>
     </div>
 
