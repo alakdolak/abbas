@@ -69,17 +69,17 @@
                         </div>
                         <div class="medalsMainBox">
                             <div>
-                                <img src="{{URL::asset('images/7.png')}}">
+                                <img src="{{URL::asset('images/coin.png')}}">
                                 <span>{{\Illuminate\Support\Facades\Auth::user()->money}}</span>
                             </div>
                             <div>
-                                <img src="{{URL::asset('images/8.png')}}">
+                                <img src="{{URL::asset('images/star.png')}}">
                                 <span>{{\Illuminate\Support\Facades\Auth::user()->stars}}</span>
                             </div>
                             <div>
                                 <div>
-                                    <img src="{{URL::asset('images/7.png')}}">
-                                    <img src="{{URL::asset('images/8.png')}}">
+                                    <img src="{{URL::asset('images/coin.png')}}">
+                                    <img src="{{URL::asset('images/star.png')}}">
                                 </div>
                                 <span>{{ \App\models\ConfigModel::first()->rev_change_rate * \Illuminate\Support\Facades\Auth::user()->money + \Illuminate\Support\Facades\Auth::user()->stars}}</span>
                             </div>

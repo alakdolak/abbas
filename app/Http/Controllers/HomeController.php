@@ -120,7 +120,7 @@ class HomeController extends Controller {
 
         }
 
-        return view('abbasProfile', ['myBuys' => $myBuys, "myServices" => $myServices,
+        return view('profile', ['myBuys' => $myBuys, "myServices" => $myServices,
             "myProducts" => $myProducts]);
     }
 
