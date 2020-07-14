@@ -28,7 +28,7 @@ class AdminController extends Controller {
 
         if(isset($_POST["initial_point"]) && isset($_POST["initial_star"]) &&
             isset($_POST["change_rate"]) && isset($_POST["project_limit"]) &&
-            isset($_POST["rev_change_rate"])
+            isset($_POST["rev_change_rate"]) && isset($_POST["service_limit"])
         ) {
             $tmp = ConfigModel::first();
             $tmp->initial_point = makeValidInput($_POST["initial_point"]);
@@ -36,6 +36,7 @@ class AdminController extends Controller {
             $tmp->change_rate = makeValidInput($_POST["change_rate"]);
             $tmp->project_limit = makeValidInput($_POST["project_limit"]);
             $tmp->rev_change_rate = makeValidInput($_POST["rev_change_rate"]);
+            $tmp->service_limit = makeValidInput($_POST["service_limit"]);
             $tmp->save();
         }
 

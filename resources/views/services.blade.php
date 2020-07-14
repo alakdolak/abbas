@@ -19,40 +19,72 @@
 
 @section("content")
 
+    <?php
+        $arr = ["اول", "دوم", "سوم", "چهارم", "پنجم", "ششم", "هفتم", "هشتم", "نهم", "دهم"]
+    ?>
+
     <div class="shopBox row" style="margin-top: 100px !important;">
-        <div class="shopEachRow col-lg-12">
 
-            <div class="shopEachRow shopEachRowTitle col-lg-12">پروژه های خدماتی هفته ی اول</div>
+        @for($i = 9; $i >= 0; $i--)
 
-            <div class="shopEachRow col-lg-12">
+            <?php $allow = false; ?>
 
-                @foreach($services as $service)
-                    <div onclick="document.location.href = '{{route('showService', ['id' => $service->id])}}'" class="shopOneBox col-lg-3 col-xs-6">
-                        <div class="sh_mainBox">
-                            <div style="background-image: url('{{$service->pic}}')" class="sh_mainPic"></div>
-                            <div class="sh_descript">
-                                <div class="sh_descriptRow sh_title">{{$service->title}}</div>
+            @foreach($services as $service)
 
-                                <div class="sh_descriptRow sh_priceBox">
-                                    <div class="priceIcons starIcon"></div>
-                                    <div class="priceText">ستاره ی دریافتی: {{$service->star}}</div>
+                @if($service->week == $i)
+                    <?php $allow = true; ?>
+                @endif
+
+            @endforeach
+
+            @if($allow)
+                <div class="shopEachRow col-lg-12" style="margin-top: 20px">
+
+                    <div class="shopEachRow shopEachRowTitle col-lg-12">پروژه های خدماتی هفته ی {{$arr[$i]}}</div>
+
+                    <div style="margin-top: 20px" class="shopEachRow col-lg-12">
+
+                        @foreach($services as $service)
+
+                            @if($service->week != $i)
+                                @continue
+                            @endif
+
+                            <div onclick="document.location.href = '{{route('showService', ['id' => $service->id])}}'" class="shopOneBox col-lg-3 col-xs-6">
+                                <div class="sh_mainBox">
+                                    <div style="background-image: url('{{$service->pic}}')" class="sh_mainPic"></div>
+                                    <div class="sh_descript">
+                                        <div class="sh_descriptRow sh_title">{{$service->title}}</div>
+
+                                        <div class="sh_descriptRow sh_priceBox">
+                                            <div class="priceIcons starIcon"></div>
+                                            <div class="priceText">ستاره ی دریافتی: {{$service->star}}</div>
+                                        </div>
+
+                                        <div class="sh_descriptRow sh_title">ظرفیت: {{$service->capacity}}</div>
+
+                                    </div>
+
                                 </div>
 
-                                <div class="sh_descriptRow sh_title">ظرفیت: {{$service->capacity}}</div>
+                                @if($service->canBuy)
+                                    <div class="sh_ownerBox">
+                                        <div style="font-size: 0.9em">سفارش دهنده: مدرسه سراج</div>
+                                    </div>
+                                @else
+                                    <div class="sh_ownerBox_finish">
+                                        <div style="font-size: 0.9em">سفارش دهنده: مدرسه سراج</div>
+                                    </div>
+                                @endif
 
                             </div>
-
-                        </div>
-
-                        <div class="sh_ownerBox">
-                            <div style="font-size: 0.9em">سفارش دهنده: مدرسه سراج</div>
-                        </div>
+                        @endforeach
 
                     </div>
-                @endforeach
+                </div>
+            @endif
 
-            </div>
-        </div>
+        @endfor
     </div>
 
 @stop

@@ -143,7 +143,18 @@
                 </div>
                 <div class="pr_mainPic"></div>
             </div>
-            <div class="shopBtn">خرید محصول</div>
+            <div onclick="buy()" class="shopBtn">خرید محصول</div>
+            <div class="eachProduct row">
+
+                <div class="col-lg-4 col-xs-12">
+
+                    <div class="pr_pics">
+                        <div class="pr_mainPic"></div>
+                        <div class="pr_otherPics"></div>
+                    </div>
+                    <div class="shopBtn"></div>
+                    </div>
+            </div>
         </div>
         <div class="pr_advertiseBox col-lg-12">
             <div class="pr_iconesBox">
@@ -155,6 +166,7 @@
             </div>
         </div>
     </div>
+
 
     <script>
 

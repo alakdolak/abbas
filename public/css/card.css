@@ -69,6 +69,18 @@
     margin-right: 10px;
 }
 
+.sh_ownerBox_finish {
+    font-size: 1.2em;
+    font-weight: 500;
+    height: 35px;
+    padding: 5px 20px;
+    color: white;
+    background-color: #a1a1a1;
+    border-right: 35px solid #f26c4f;
+    display: flex;
+    align-items: center;
+}
+
 .sh_ownerBox {
     font-size: 1.2em;
     font-weight: 500;
@@ -77,7 +89,6 @@
     color: white;
     background-color: #a1a1a1;
     border-right: 35px solid #04c582;
-    /*border-right: 35px solid #f26c4f;*/
     display: flex;
     align-items: center;
 }

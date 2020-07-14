@@ -220,7 +220,14 @@ class HomeController extends Controller {
             if(!Auth::user()->status) {
                 $msg = "حساب کاربری شما هنوز فعال نشده است";
                 Auth::logout();
-                return view('login', ['loginErr' => $msg]);
+
+                $x = -1;
+
+                if(!siteTime()) {
+                    $x = getReminderToNextTime();
+                }
+
+                return view('home', ['loginErr' => $msg, "reminder" => $x]);
             }
 
             if(Auth::user()->level == getValueInfo('studentLevel'))
@@ -247,11 +254,18 @@ class HomeController extends Controller {
 
         $grade = Auth::user()->grade_id;
 
-        $services = DB::select('select id, title, description, star, capacity from service where ' .
+        $services = DB::select('select id, title, description, star, capacity, created_at from service where ' .
             '(select count(*) from service_grade where service_id = service.id and grade_id = ' . $grade . ' ) > 0'.
             ' and hide = false order by id desc');
 
+        $today = getToday()["date"];
+
         foreach ($services as $service) {
+
+            $date = MiladyToShamsi('', explode('-', explode(' ', $service->created_at)[0]));
+            $date = convertDateToString2($date, "-");
+
+            $service->week = floor(($today - $date) / 7.0);
 
             $tmpPic = ServicePic::whereServiceId($service->id)->first();
 
@@ -259,6 +273,11 @@ class HomeController extends Controller {
                 $service->pic = URL::asset('servicePic/defaultPic.jpg');
             else
                 $service->pic = URL::asset('servicePic/' . $tmpPic->name);
+
+            if($service->capacity == -1)
+                $service->canBuy = true;
+            else
+                $service->canBuy = (ServiceBuyer::whereServiceId($service->id)->count() < $service->capacity);
 
             $service->likes = Likes::whereItemId($service->id)->whereMode(getValueInfo('serviceMode'))->count();
             $service->reminder = $service->capacity - ServiceBuyer::whereServiceId($service->id)->count();
@@ -304,12 +323,15 @@ class HomeController extends Controller {
 
         $service->pics = $pics;
 
-        $bookmark = (Bookmark::whereUserId(Auth::user()->id)->whereItemId($id)->whereMode(getValueInfo('serviceMode'))->count() > 0);
+        $bookmark = true;
+//        $bookmark = (Bookmark::whereUserId(Auth::user()->id)->whereItemId($id)->whereMode(getValueInfo('serviceMode'))->count() > 0);
+
         $like = (Likes::whereUserId(Auth::user()->id)->whereItemId($id)->whereMode(getValueInfo('serviceMode'))->count() > 0);
 
         $canBuy = true;
 
-        if(ServiceBuyer::whereServiceId($id)->count() == $service->capacity ||
+        if(
+            ($service->capacity != -1 && ServiceBuyer::whereServiceId($id)->count() == $service->capacity) ||
             ServiceBuyer::whereServiceId($id)->whereUserId(Auth::user()->id)->count() > 0
         )
             $canBuy = false;
@@ -325,11 +347,13 @@ class HomeController extends Controller {
         $grade = Auth::user()->grade_id;
         $date = getToday()["date"];
 
-        $projects = DB::select('select id, title, description, price from project where ' .
+        $projects = DB::select('select id, title, description, price, capacity, start_reg from project where ' .
             '(select count(*) from project_grade where project_id = project.id and grade_id = ' . $grade . ' ) > 0' .
             ' and start_reg <= ' . $date . ' and end_reg >= ' . $date . ' and hide = false order by id desc');
 
         foreach ($projects as $project) {
+
+            $project->week = floor(($date - $project->start_reg) / 7.0);
 
             $tmpPic = ProjectPic::whereProjectId($project->id)->first();
 
@@ -342,6 +366,11 @@ class HomeController extends Controller {
                 $project->price = "رایگان";
             else
                 $project->price = number_format($project->price);
+
+            if($project->capacity == -1)
+                $project->canBuy = true;
+            else
+                $project->canBuy = (ProjectBuyers::whereProjectId($project->id)->count() < $project->capacity);
 
             $project->likes = Likes::whereItemId($project->id)->whereMode(getValueInfo('projectMode'))->count();
             $project->tags = DB::select("select t.name, t.id from tag t, project_tag p where t.id = p.tag_id and p.project_id = " . $project->id);
@@ -427,6 +456,10 @@ class HomeController extends Controller {
         )
             $canBuy = false;
 
+        if($canBuy && $project->capacity != -1) {
+            $canBuy = (ProjectBuyers::whereProjectId($project->id)->count() < $project->capacity);
+        }
+
         $capacity = ConfigModel::first()->project_limit;
         $nums = DB::select("select count(*) as countNum from project_buyers where status = false and user_id = " . Auth::user()->id)[0]->countNum;
 
@@ -444,12 +477,18 @@ class HomeController extends Controller {
 
         $grade = Auth::user()->grade_id;
 
+        $today = getToday()["date"];
         $products = DB::select('select p.id, name, description, price, star, project_id, ' .
-            'concat(u.first_name, " ", u.last_name) as owner' .
+            'concat(u.first_name, " ", u.last_name) as owner, p.created_at' .
             ' from product p, users u where ' .
             'p.user_id = u.id and u.grade_id = ' . $grade . ' and hide = false order by p.id desc');
 
         foreach ($products as $product) {
+
+            $date = MiladyToShamsi('', explode('-', explode(' ', $product->created_at)[0]));
+            $date = convertDateToString2($date, "-");
+
+            $product->week = floor(($today - $date) / 7.0);
 
             $tmpPic = ProductPic::whereProductId($product->id)->first();
 
@@ -472,6 +511,8 @@ class HomeController extends Controller {
                 $str .= $tag->id . '-';
 
             $product->tagStr = $str;
+
+            $product->canBuy = (Transaction::whereProductId($product->id)->count() == 0);
         }
 
         return view('products', ['products' => $products, 'tags' => Tag::all()]);
@@ -696,7 +737,6 @@ class HomeController extends Controller {
                 return;
             }
 
-
             if(Auth::user()->level == getValueInfo('studentLevel')) {
 
                 $grades = ProjectGrade::whereProjectId($project->id)->get();
@@ -715,6 +755,12 @@ class HomeController extends Controller {
                 }
             }
 
+
+            if($project->capacity != -1 &&
+                ProjectBuyers::whereProjectId($project->id)->count() >= $project->capacity) {
+                echo "nok7";
+                return;
+            }
 
             if(ProjectBuyers::whereUserId($user->id)->whereProjectId($project->id)->count() > 0) {
                 echo "nok2";

@@ -179,7 +179,19 @@
                                 <tr class="myTr tr_{{$itr->grade_id}}" id="tr_{{$itr->id}}">
                                     <td>{{$i}}</td>
                                     <td>{{$itr->title}}</td>
-                                    <td>{{$itr->grade}}</td>
+
+                                    <td>
+                                        @foreach($itr->grades as $grade)
+                                            <button id="grade_{{$grade->id}}" onclick="removeGrade('{{$grade->id}}')" style="margin: 4px" class="btn btn-info">
+                                                <span>{{$grade->name}}</span>
+                                                <span style="font-family: 'Glyphicons Halflings' !important;" class="glyphicon glyphicon-remove"></span>
+                                            </button>
+                                        @endforeach
+                                        <div style="margin-top: 10px">
+                                            <button onclick="showGrades('{{$itr->id}}')" class="btn btn-default">افزودن پایه تحصیلی جدید</button>
+                                        </div>
+                                    </td>
+
                                     <td>{{$itr->capacity}}</td>
                                     <td><img width="100px" src="{{$itr->pic}}"></td>
                                     <td>{!! html_entity_decode($itr->description) !!}</td>
@@ -272,6 +284,28 @@
         </form>
     </div>
 
+    <div id="myGradeModal" class="modal">
+
+        <div class="modal-content">
+
+            <center>
+
+                <h5 style="padding-right: 5%;">پایه های تحصیلی</h5>
+                <select id="gradeId">
+                    @foreach($grades as $grade)
+                        <option value="{{$grade->id}}">{{$grade->name}}</option>
+                    @endforeach
+                </select>
+            </center>
+
+            <div style="margin-top: 20px">
+                <input onclick="addNewGrade()" type="submit" value="افزودن پایه تحصیلی" class="btn green"  style="margin-right: 5%; margin-bottom: 3%">
+                <input type="button" value="انصراف" class="btn green"  style="float: left; margin-bottom: 3%; margin-left: 5%;" onclick="document.getElementById('myGradeModal').style.display = 'none'">
+            </div>
+        </div>
+
+    </div>
+
     <div id="myConfirmModal" class="modal">
 
 
@@ -292,7 +326,59 @@
 
     </div>
 
+
     <script>
+
+        var itemId;
+
+        function showGrades(id) {
+            itemId = id;
+            document.getElementById('myGradeModal').style.display = 'block';
+        }
+
+        function removeGrade(id) {
+
+            $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                },
+                url: '{{route('deleteGradeService')}}',
+                data: {
+                    id: id
+                },
+                success: function (res) {
+
+                    if(res === "ok")
+                        $("#grade_" + id).remove();
+
+                }
+            });
+        }
+
+
+        function addNewGrade() {
+
+            $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                },
+                url: '{{route('addGradeService')}}',
+                data: {
+                    id: itemId,
+                    gradeId: $("#gradeId").val()
+                },
+                success: function (res) {
+
+                    if(res === "ok")
+                        document.location.reload();
+
+                }
+            });
+
+        }
+
 
         function filter(id) {
 
