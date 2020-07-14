@@ -20,7 +20,6 @@
 
 @section("content")
 
-
     <div class="shopBox row">
         <div class="shopEachRow col-lg-12">
 
@@ -29,7 +28,7 @@
             <div class="shopEachRow col-lg-12">
 
                 @foreach($products as $product)
-                    <div data-tag="{{$product->tagStr}}" onclick="document.location.href = '{{route('showProduct', ['id' => $product->id])}}'" class="shopOneBox col-lg-3 col-xs-6">
+                    <div data-tag="{{$product->tagStr}}" onclick="document.location.href = '{{route('showProduct', ['id' => $product->id])}}'" class="myItem shopOneBox col-lg-3 col-xs-6">
                         <div class="sh_mainBox">
                             <div style="background-image: url('{{$product->pic}}')" class="sh_mainPic"></div>
                             <div class="sh_descript">
@@ -54,7 +53,7 @@
                         </div>
 
                         <div class="sh_ownerBox">
-                            <div>اثر: آقای حاجی قاسمی</div>
+                            <div>اثر: {{$product->owner}}</div>
                         </div>
                     </div>
                 @endforeach
