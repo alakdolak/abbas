@@ -36,6 +36,8 @@
                                     <div class="priceIcons coinIcon"></div>
                                     @if($project->price != "رایگان")
                                         <div class="priceText">قیمت: {{$project->price}} سکه</div>
+                                    @else
+                                        <div class="priceText">قیمت: رایگان</div>
                                     @endif
                                 </div>
 

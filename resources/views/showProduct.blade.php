@@ -8,19 +8,46 @@
             margin: 50px 12% 0 !important;
         }
         .pr_pics {
-
         }
         .pr_mainPic {
-            border: 2px solid #acacac;
+            height: 300px;
+            border: 4px solid #acacac;
         }
         .pr_otherPics{
-
+            margin: 20px 0 35px 0;
+        }
+        .pr_eachOtherPics{
+            height: 85px;
+            border: 2px solid #acacac;
+            width: 24%;
+            margin: 0 1px;
+        }
+        .pr_eachOtherPics:nth-child(1) {
+            margin-left: 0;
+        }
+        .pr_eachOtherPics:last-child{
+            margin-right: 0;
+        }
+        .pr_eachOtherPics{
+            height: 85px;
+            border: 2px solid #acacac;
+            width: 24.5%;
+            margin: 0 1px;
         }
         .shopBtn{
             color: white;
             background-color: #68cda5;
             border-bottom: 5px solid #48c291;
             box-shadow: 5px 5px 5px;
+            border-radius: 7px;
+            padding: 15px 30px;
+            font-size: 1.75em;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+        }
+        .shopBtn:hover {
+            background-color: #48c291;
         }
         .pr_descript{
             font-size: 1.3em;
@@ -68,12 +95,17 @@
             margin-left: 10px;
         }
         .folderIcon{
-            /*background-image: url(../images/folder.png);*/
+            background-image: url(../images/folder.png);
         }
         .movieIcon{
-            /*background-image: url(../images/movie.png);*/
+            background-image: url(../images/movie.png);
         }
+
     </style>
+
+@stop
+
+@section("content")
 
     <div class="eachProduct row">
         <div class="pr_descript col-lg-8 col-xs-12">
@@ -106,13 +138,17 @@
                 </div>
             </div>
         </div>
-
         <div class="col-lg-4 col-xs-12">
             <div class="pr_pics">
                 <div class="pr_mainPic"></div>
-                <div class="pr_otherPics"></div>
+                <div class="pr_otherPics row">
+                    <div class="pr_eachOtherPics col-lg-3 col-sm-6"></div>
+                    <div class="pr_eachOtherPics col-lg-3 col-sm-6"></div>
+                    <div class="pr_eachOtherPics col-lg-3 col-sm-6"></div>
+                    <div class="pr_eachOtherPics col-lg-3 col-sm-6"></div>
+                </div>
             </div>
-            <div class="shopBtn"></div>
+            <div class="shopBtn">خرید محصول</div>
         </div>
     </div>
 
@@ -205,5 +241,4 @@
         }
 
     </script>
-
 @stop
