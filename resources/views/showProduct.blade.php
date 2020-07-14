@@ -8,31 +8,24 @@
             margin: 50px 12% 0 !important;
         }
         .pr_pics {
+            display: flex;
         }
         .pr_mainPic {
-            height: 300px;
-            border: 4px solid #acacac;
+            height: 320px;
+            border: 3px solid #acacac;
+            width: 74%;
         }
         .pr_otherPics{
-            margin: 20px 0 35px 0;
+            width: 22%;
+            margin-left: 5%;
         }
         .pr_eachOtherPics{
-            height: 85px;
-            border: 2px solid #acacac;
-            width: 24%;
-            margin: 0 1px;
-        }
-        .pr_eachOtherPics:nth-child(1) {
-            margin-left: 0;
+            height: 70px;
+            border: 3px solid #acacac;
+            margin: 0 0 13px 0;
         }
         .pr_eachOtherPics:last-child{
-            margin-right: 0;
-        }
-        .pr_eachOtherPics{
-            height: 85px;
-            border: 2px solid #acacac;
-            width: 24.5%;
-            margin: 0 1px;
+            margin-bottom: 0;
         }
         .shopBtn{
             color: white;
@@ -41,6 +34,7 @@
             box-shadow: 5px 5px 5px;
             border-radius: 7px;
             padding: 15px 30px;
+            margin-top: 35px;
             font-size: 1.75em;
             font-weight: 500;
             text-align: center;
@@ -70,10 +64,6 @@
             margin-right: 40px;
             text-align: justify;
         }
-        .pr_advertise {
-            margin-right: 40px;
-            text-align: justify;
-        }
         .pr_title{
             background-color: #f26c4f;
             color: white;
@@ -100,6 +90,20 @@
         .movieIcon{
             background-image: url(../images/movie.png);
         }
+        .pr_advertiseBox {
+            margin-top: 50px;
+            padding: 0 !important;
+            font-size: 1.3em;
+            font-weight: 500;
+            color: #a4a4a4;
+        }
+        .pr_advertise {
+            margin-right: 40px;
+            text-align: justify;
+            border: 2px solid #a4a4a4;
+            border-radius: 7px;
+            padding: 5px 15px;
+        }
 
     </style>
 
@@ -108,7 +112,7 @@
 @section("content")
 
     <div class="eachProduct row">
-        <div class="pr_descript col-lg-8 col-xs-12">
+        <div class="pr_descript col-lg-7 col-xs-12">
             <div class="pr_descriptRow pr_title">پروژه ی کیف دستی</div>
             <div class="pr_descriptRow pr_salesman">فروشنده: آقای حاجی قاسمی</div>
             <div class="pr_descriptRow pr_iconesBox">
@@ -125,28 +129,19 @@
                     <div>توضیحات:</div>
                 </div>
                 <div class="pr_description">
-                    <div>توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست.</div>
-                </div>
-            </div>
-            <div class="pr_descriptRow">
-                <div class="pr_iconesBox">
-                    <div class="pr_icons coinIcon"></div>
-                    <div>تبلیغات:</div>
-                </div>
-                <div class="pr_advertise">
-                    <div>توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست.</div>
+                    <div>توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست.</div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 col-xs-12">
+        <div class="col-lg-5 col-xs-12" style="padding-right: 0 !important;">
             <div class="pr_pics">
-                <div class="pr_mainPic"></div>
-                <div class="pr_otherPics row">
-                    <div class="pr_eachOtherPics col-lg-3 col-sm-6"></div>
-                    <div class="pr_eachOtherPics col-lg-3 col-sm-6"></div>
-                    <div class="pr_eachOtherPics col-lg-3 col-sm-6"></div>
-                    <div class="pr_eachOtherPics col-lg-3 col-sm-6"></div>
+                <div class="pr_otherPics">
+                    <div class="pr_eachOtherPics"></div>
+                    <div class="pr_eachOtherPics"></div>
+                    <div class="pr_eachOtherPics"></div>
+                    <div class="pr_eachOtherPics"></div>
                 </div>
+                <div class="pr_mainPic"></div>
             </div>
             <div onclick="buy()" class="shopBtn">خرید محصول</div>
             <div class="eachProduct row">
@@ -159,6 +154,15 @@
                     </div>
                     <div class="shopBtn"></div>
                     </div>
+            </div>
+        </div>
+        <div class="pr_advertiseBox col-lg-12">
+            <div class="pr_iconesBox">
+                <div class="pr_icons coinIcon"></div>
+                <div>تبلیغات:</div>
+            </div>
+            <div class="pr_advertise">
+                <div>توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست.</div>
             </div>
         </div>
     </div>
