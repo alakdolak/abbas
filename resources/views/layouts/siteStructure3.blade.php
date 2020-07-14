@@ -20,6 +20,7 @@
         <link rel="stylesheet" href="{{\Illuminate\Support\Facades\URL::asset("css/header.css")}}">
         <link rel="stylesheet" href="{{\Illuminate\Support\Facades\URL::asset("css/footer.css")}}">
         <link rel="stylesheet" href="{{\Illuminate\Support\Facades\URL::asset("css/general.css")}}">
+        <link rel="stylesheet" href="{{\Illuminate\Support\Facades\URL::asset("css/choosePlan.css")}}">
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -41,11 +42,13 @@
 
 
     @if(isset($tags))
-        <div style="margin: 100px 12% 25px; text-align: center;">
-            <button id="allTags" class="tagFilter selectedTag" data-status="1" data-filter="-1">همه موارد</button>
-            @foreach($tags as $tag)
-                <button data-status="0" class="tagFilter" data-filter="{{$tag->id}}">{{$tag->name}}</button>
-            @endforeach
+        <div class="filterBorder">
+            <div class="filterBox">
+                <div id="allTags" class="tagFilter filterTag selectedTag" data-status="1" data-filter="-1">همه موارد</div>
+                @foreach($tags as $tag)
+                    <div data-status="0" class="tagFilter filterTag" data-filter="{{$tag->id}}">{{$tag->name}}</div>
+                @endforeach
+            </div>
         </div>
     @endif
 

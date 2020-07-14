@@ -73,11 +73,11 @@
             <div class="loginBtnDiv">
                 <div class="loginBtn">ورود</div>
             </div>
-            <center>
+            <div style="text-align: center;">
                 <p id="loginErr"></p>
-            </center>
+            </div>
             <div class="loginDownArrow">
-                <i class="fa fa-lock fa-sort-desc loginIcon" aria-hidden="true"></i>
+                <i class="fa fa-lock fa-sort-desc loginIcon loginDownArrowIcon" aria-hidden="true"></i>
             </div>
         </form>
     </div>

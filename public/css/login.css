@@ -92,7 +92,13 @@
 }
 
 .loginDownArrow {
-    text-align: center;
+    position: relative;
     font-size: 4.5em;
-    margin-top: 20px;
+}
+
+.loginDownArrowIcon {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translate(-50%);
 }

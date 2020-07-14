@@ -308,7 +308,3 @@ a {
 .container {
     width: 100% !important;
 }
-
-.selectedTag {
-    background-color: yellow;
-}

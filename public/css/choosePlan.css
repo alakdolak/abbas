@@ -16,16 +16,32 @@
     cursor: pointer;
 }
 
+.planes:hover {
+    font-size: 1.7em;
+}
+
 .projects {
     background-image: url(../images/projects.png);
+}
+
+.projects:hover {
+    opacity: 0.85;
 }
 
 .Services {
     background-image: url(../images/Services.png);
 }
 
+.Services:hover {
+    opacity: 0.85;
+}
+
 .Products {
     background-image: url(../images/Products.png);
+}
+
+.Products:hover {
+    opacity: 0.85;
 }
 
 .planeText {
@@ -34,4 +50,38 @@
     font-size: 1.5em;
     font-weight: 500;
     color: white;
+}
+
+/*the css of filters*/
+
+.filterBorder {
+    margin: 100px 12% 25px;
+    text-align: center;
+    border-right: 35px solid #f37053;
+    border-left: 35px solid #f37053;
+}
+.filterBox {
+    display: flex;
+    justify-content: center;
+    background: #efecea;
+    border-right: 35px solid #9fa4a6;
+    border-left: 35px solid #9fa4a6;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+.filterTag {
+    width: 10%;
+    padding: 10px 0;
+    border-left: 1px solid #9fa4a6;
+    cursor: pointer;
+}
+.filterTag:hover {
+    border-bottom: 2px solid #9fa4a6;
+}
+.filterTag:nth-child(4) {
+    border-left: 0;
+}
+.selectedTag {
+    color: #f37053;
+    border-bottom: 2px solid #f37053 !important;
 }
