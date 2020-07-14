@@ -51,9 +51,15 @@
                             </div>
                         </div>
 
-                        <div class="sh_ownerBox">
-                            <div style="font-size: 0.9em">سفارش دهنده: مدرسه سراج</div>
-                        </div>
+                        @if($project->canBuy)
+                            <div class="sh_ownerBox">
+                                <div style="font-size: 0.9em">سفارش دهنده: مدرسه سراج</div>
+                            </div>
+                        @else
+                            <div class="sh_ownerBox_finish">
+                                <div style="font-size: 0.9em">سفارش دهنده: مدرسه سراج</div>
+                            </div>
+                        @endif
                     </div>
                 @endforeach
 

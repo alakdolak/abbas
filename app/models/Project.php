@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property boolean $hide
  * @property string $description
  * @property string $start_reg
+ * @property integer $capacity
  * @property string $end_reg
  * @property integer $price
  * @method static \Illuminate\Database\Query\Builder|\App\models\Project whereGradeId($value)

@@ -64,6 +64,7 @@
                                     <th scope="col">ردیف</th>
                                     <th scope="col">نام</th>
                                     <th scope="col">پایه تحصیلی</th>
+                                    <th scope="col">ظرفیت</th>
                                     <th scope="col">تاریخ شروع امکان خرید</th>
                                     <th scope="col">تاریخ پایان امکان خرید</th>
                                     <td scope="col">تصویر</td>
@@ -96,6 +97,7 @@
                                             </div>
                                         </td>
 
+                                        <td>{{$itr->capacity}}</td>
                                         <td>{{$itr->startReg}}</td>
                                         <td>{{$itr->endReg}}</td>
                                         <td><img width="100px" src="{{$itr->pic}}"></td>
@@ -160,6 +162,11 @@
                             <option value="{{$grade->id}}">{{$grade->name}}</option>
                         @endforeach
                     </select>
+
+                    <h5 style="padding-right: 5%;">ظرفیت</h5>
+                    <input type="number" name="capacity" required>
+                    <p>اگر می خواهید ظرفیت این پروژه بی نهایت باشد، 1- را وارد نمایید.</p>
+
 
                     <div>
                         <span>تاریخ شروع امکان خرید</span>
@@ -231,7 +238,6 @@
         </div>
 
     </div>
-
 
     <div id="myGradeModal" class="modal">
 

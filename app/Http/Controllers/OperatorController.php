@@ -69,10 +69,11 @@ class OperatorController extends Controller {
 
     public function services() {
 
-        $services = DB::select("select s.*, g.name as grade from service s, grade g where s.grade_id = g.id order by s.id desc");
+        $services = Service::orderBy('id', 'desc')->get();
 
         foreach ($services as $service) {
 
+            $service->grades = DB::select("select s.id, g.name from service_grade s, grade g where s.grade_id = g.id and s.service_id = " . $service->id);
             $tmpPic = ServicePic::whereServiceId($service->id)->first();
 
             if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/servicePic/' . $tmpPic->name))
@@ -90,16 +91,18 @@ class OperatorController extends Controller {
                 $service->buyers = null;
             else {
 
-                $service->buyers = [];
+                $tmp = [];
 
                 foreach ($t as $itr) {
                     $u = User::whereId($itr->user_id);
-                    $service->buyers[count($service->buyers)] =
+                    $tmp[count($tmp)] =
                         ["name" => $u->first_name . ' ' . $u->last_name,
                         "id" => $u->id,
                         "status" => $itr->status,
                         "star" => $itr->star];
                 }
+
+                $service->buyers = $tmp;
             }
         }
 
@@ -166,6 +169,9 @@ class OperatorController extends Controller {
                 $project->price = "رایگان";
             else
                 $project->price = number_format($project->price);
+
+            if($project->capacity == -1)
+                $project->capacity = "بی نهایت";
 
             $project->startReg = convertStringToDate($project->start_reg);
             $project->endReg = convertStringToDate($project->end_reg);
@@ -240,6 +246,41 @@ class OperatorController extends Controller {
         echo "nok";
     }
 
+
+
+    public function addGradeService() {
+
+        if(isset($_POST["id"]) && isset($_POST["gradeId"])) {
+
+            $tmp = new ServiceGrade();
+            $tmp->service_id = makeValidInput($_POST["id"]);
+            $tmp->grade_id = makeValidInput($_POST["gradeId"]);
+            try {
+                $tmp->save();
+                echo "ok";
+                return;
+            }
+            catch (\Exception $x) {}
+        }
+
+        echo "nok";
+
+    }
+
+    public function deleteGradeService() {
+
+        if(isset($_POST["id"])) {
+
+            try {
+                ServiceGrade::destroy(makeValidInput($_POST["id"]));
+                echo "ok";
+                return;
+            }
+            catch (\Exception $x) {}
+        }
+
+        echo "nok";
+    }
 
 
 
@@ -344,7 +385,7 @@ class OperatorController extends Controller {
     public function addService() {
 
         if(isset($_POST["name"]) && isset($_POST["description"])
-            && isset($_POST["star"]) && isset($_POST["grades"]) && isset($_POST["capacity"])
+            && isset($_POST["star"]) && isset($_POST["gradeId"]) && isset($_POST["capacity"])
         ) {
 
             $service = new Service();
@@ -357,13 +398,12 @@ class OperatorController extends Controller {
 
                 $service->save();
 
-                $grades = $_POST["grades"];
-                foreach ($grades as $grade) {
-                    $tmp = new ServiceGrade();
-                    $tmp->grade_id = makeValidInput($grade);
-                    $tmp->service_id = $service->id;
-                    $tmp->save();
-                }
+                $gradeId = makeValidInput($_POST["gradeId"]);
+
+                $tmp = new ServiceGrade();
+                $tmp->grade_id = $gradeId;
+                $tmp->service_id = $service->id;
+                $tmp->save();
 
                 if(isset($_FILES["file"]) && !empty($_FILES["file"]["name"])) {
 
@@ -419,13 +459,14 @@ class OperatorController extends Controller {
     public function addProject() {
 
         if(isset($_POST["name"]) && isset($_POST["description"])
-            && isset($_POST["price"]) && isset($_POST["grades"])
+            && isset($_POST["price"]) && isset($_POST["gradeId"]) && isset($_POST["capacity"])
             && isset($_POST["start_reg"]) && isset($_POST["end_reg"])
         ) {
 
             $project = new Project();
             $project->title = makeValidInput($_POST["name"]);
             $project->description = $_POST["description"];
+            $project->capacity = makeValidInput($_POST["capacity"]);
             $project->price = makeValidInput($_POST["price"]);
             $project->start_reg = convertDateToString(makeValidInput($_POST["start_reg"]));
             $project->end_reg = convertDateToString(makeValidInput($_POST["end_reg"]));
@@ -434,15 +475,11 @@ class OperatorController extends Controller {
 
                 $project->save();
 
-                $grades = $_POST["grades"];
-
-                foreach ($grades as $grade) {
-
-                    $tmp = new ProjectGrade();
-                    $tmp->grade_id = makeValidInput($grade);
-                    $tmp->project_id = $project->id;
-                    $tmp->save();
-                }
+                $gradeId = makeValidInput($_POST["gradeId"]);
+                $tmp = new ProjectGrade();
+                $tmp->grade_id = $gradeId;
+                $tmp->project_id = $project->id;
+                $tmp->save();
 
 
                 if(isset($_FILES["file"]) && !empty($_FILES["file"]["name"])) {

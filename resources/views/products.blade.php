@@ -23,7 +23,7 @@
     <div class="shopBox row">
         <div class="shopEachRow col-lg-12">
 
-            <div class="shopEachRow shopEachRowTitle col-lg-12">پروژه های هفته ی اول</div>
+            <div class="shopEachRow shopEachRowTitle col-lg-12">محصولات هفته ی اول</div>
 
             <div class="shopEachRow col-lg-12">
 
@@ -52,9 +52,15 @@
 
                         </div>
 
-                        <div class="sh_ownerBox">
-                            <div>اثر: {{$product->owner}}</div>
-                        </div>
+                        @if($product->canBuy)
+                            <div class="sh_ownerBox">
+                                <div>اثر: {{$product->owner}}</div>
+                            </div>
+                        @else
+                            <div class="sh_ownerBox_finish">
+                                <div>اثر: {{$product->owner}}</div>
+                            </div>
+                        @endif
                     </div>
                 @endforeach
 

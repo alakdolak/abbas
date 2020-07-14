@@ -50,6 +50,11 @@
                 <input value="{{$config->project_limit}}" id="project_limit" name="project_limit" type="number">
             </div>
 
+            <div>
+                <label for="service_limit">محدودیت تعداد خدمات انجام نشده</label>
+                <input value="{{$config->service_limit}}" id="service_limit" name="service_limit" type="number">
+            </div>
+
             <div style="margin-top: 30px">
                 <input type="submit" class="btn btn-success" value="ذخیره">
             </div>
