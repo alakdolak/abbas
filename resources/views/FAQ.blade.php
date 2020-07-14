@@ -1,4 +1,4 @@
-@extends('layouts.siteStructure')
+@extends('layouts.siteStructure2')
 
 @section('header')
     @parent

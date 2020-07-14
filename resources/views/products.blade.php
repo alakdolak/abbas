@@ -66,12 +66,12 @@
                                             <div class="priceText">ستاره ی دریافتی: {{$product->star}}</div>
                                         </div>
 
-                                        <p class="sh_descriptRow sh_title" style="direction: rtl; text-align: right">
-                                            @foreach($product->tags as $tag)
-                                                <span>#{{$tag->name}}</span>
-                                                <span>&nbsp;&nbsp;</span>
-                                            @endforeach
-                                        </p>
+{{--                                        <p class="sh_descriptRow sh_title" style="direction: rtl; text-align: right">--}}
+{{--                                            @foreach($product->tags as $tag)--}}
+{{--                                                <span>#{{$tag->name}}</span>--}}
+{{--                                                <span>&nbsp;&nbsp;</span>--}}
+{{--                                            @endforeach--}}
+{{--                                        </p>--}}
                                     </div>
 
                                 </div>

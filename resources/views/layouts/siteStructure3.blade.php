@@ -64,22 +64,8 @@
 
     @yield("content")
 
-    <?php
-        $msgs = \Illuminate\Support\Facades\DB::select("select m.id, m.text, m.is_me, m.created_at from chat c, msg m where c.id = m.chat_id and c.user_id = " . \Illuminate\Support\Facades\Auth::user()->id
-            . " and c.created_at > DATE_SUB(NOW(), INTERVAL 6 HOUR) order by m.id asc");
-
-        foreach ($msgs as $msg) {
-            $timestamp = strtotime($msg->created_at);
-            $msg->time = MiladyToShamsiTime($timestamp);
-        }
-    ?>
-
     @include("layouts.footer")
     @include("layouts.support")
-
-    <div id="chat-bot-launcher-container" class="chat-bot-flex-end chat-bot-launcher-enabled">
-        <div id="chat-bot-launcher" class="chat-bot-launcher chat-bot-flex-center chat-bot-launcher-active" style="background-color: rgb(7, 70, 166);"><div id="chat-bot-launcher-button" class="chat-bot-launcher-button"></div><div style="color: white; font-family: IRANSans" id="chat-bot-launcher-text">پشتیبانی آنلاین</div></div>
-    </div>
 
     <script>
 

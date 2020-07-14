@@ -325,8 +325,8 @@ class OperatorController extends Controller {
 
         DB::delete("delete from chat where created_at < DATE_SUB(NOW(), INTERVAL 6 HOUR)");
 
-        $chats = DB::select("select m.chat_id as id, concat(u.first_name, ' ', u.last_name) as name, count(*) as countNum from chat c, users u, msg m where user_id = " . Auth::user()->id
-            . " and c.created_at > DATE_SUB(NOW(), INTERVAL 6 HOUR) and c.user_id = u.id and c.id = chat_id and seen = false group by(m.chat_id) having countNum > 0");
+        $chats = DB::select("select m.chat_id as id, concat(u.first_name, ' ', u.last_name) as name, count(*) as countNum from chat c, users u, msg m where "
+            . " c.created_at > DATE_SUB(NOW(), INTERVAL 6 HOUR) and c.user_id = u.id and c.id = chat_id group by(m.chat_id) having countNum > 0");
 
         return view("chats", ["chats" => $chats]);
     }

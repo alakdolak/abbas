@@ -93,6 +93,18 @@ Route::group(['middleware' => ['auth', 'adminLevel']], function () {
 
     Route::post('toggleStatusUser', ['as' => 'toggleStatusUser', 'uses' => 'AdminController@toggleStatusUser']);
 
+    Route::post('toggleSuperStatusUser', ['as' => 'toggleSuperStatusUser', 'uses' => 'AdminController@toggleSuperStatusUser']);
+
+
+
+    Route::get('userServices/{uId}', ['as' => 'userServices', 'uses' => 'ReportController@userServices']);
+
+    Route::get('userProjects/{uId}', ['as' => 'userProjects', 'uses' => 'ReportController@userProjects']);
+
+    Route::get('userBuys/{uId}', ['as' => 'userBuys', 'uses' => 'ReportController@userBuys']);
+
+
+
     Route::get('commonQuestionsPanel', ['as' => 'commonQuestionsPanel', 'uses' => 'AdminController@commonQuestionsPanel']);
 
     Route::post('addCommonQuestion', ['as' => 'addCommonQuestion', 'uses' => 'AdminController@addCommonQuestion']);
@@ -137,8 +149,6 @@ Route::group(['middleware' => ['auth', 'adminLevel']], function () {
     Route::get('usersReport/{gradeId?}', ['as' => 'usersReport', 'uses' => 'ReportController@usersReport']);
 
     Route::get('userBookmarks/{uId}', ['as' => 'userBookmarks', 'uses' => 'ReportController@userBookmarks']);
-
-    Route::get('userBuys/{uId}', ['as' => 'userBuys', 'uses' => 'ReportController@userBuys']);
 
     Route::post('editMoney', ['as' => 'editMoney', 'uses' => 'AdminController@editMoney']);
 
@@ -213,4 +223,12 @@ Route::group(['middleware' => ['auth', 'operatorLevel']], function () {
     Route::get("chats", ["as" => "chats", "uses" => "OperatorController@chats"]);
 
     Route::post("sendRes", ["as" => "sendRes", "uses" => "OperatorController@sendRes"]);
+
+
+    Route::get("unDoneProjectsReport/{gradeId?}", ["as" => "unDoneProjectsReport", "uses" => "ReportController@unDoneProjectsReport"]);
+
+    Route::get("productProjectReport/{gradeId?}", ["as" => "productProjectReport", "uses" => "ReportController@productProjectReport"]);
+
+    Route::get("productsReport/{gradeId?}", ["as" => "productsReport", "uses" => "ReportController@productsReport"]);
+
 });

@@ -31,7 +31,7 @@
 
             @foreach($grades as $grade)
                 <div class="col-xs-4">
-                    <p onclick="document.location.href = '{{route('usersReport', ['gradeId' => $grade->id])}}'" class="gradeBox">{{$grade->name}}</p>
+                    <p onclick="document.location.href = '{{$path . '/' . $grade->id}}'" class="gradeBox">{{$grade->name}}</p>
                 </div>
             @endforeach
 

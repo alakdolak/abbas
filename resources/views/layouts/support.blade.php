@@ -7,6 +7,9 @@ $msgs = \Illuminate\Support\Facades\DB::select("select m.id, m.text, m.is_me, m.
 foreach ($msgs as $msg) {
     $timestamp = strtotime($msg->created_at);
     $msg->time = MiladyToShamsiTime($timestamp);
+
+    $timestamp = strtotime($msg->created_at);
+    $msg->time = MiladyToShamsiTime($timestamp);
 }
 ?>
 
