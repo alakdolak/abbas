@@ -15,19 +15,19 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', ['as' => 'home', 'uses' => 'HomeController@home']);
 
-Route::get('faq', ['as' => 'faq', 'uses' => 'BaseController@faq']);
+Route::get('faq', ['as' => 'faq', 'uses' => 'HomeController@faq']);
+
+Route::get('contactUs', ['as' => 'contactUs', 'uses' => 'HomeController@contactUs']);
+
+Route::get('rules', ['as' => 'rules', 'uses' => 'HomeController@rules']);
+
+
 
 Route::group(['middleware' => ['notLogin']], function () {
 
     Route::get('login', ['as' => 'login', 'uses' => 'HomeController@login']);
 
     Route::post('doLogin', ['as' => 'doLogin', 'uses' => 'HomeController@doLogin']);
-
-});
-
-Route::group(['middleware' => ['auth', 'studentLevel']], function () {
-
-
 
 });
 

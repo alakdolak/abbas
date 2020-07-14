@@ -13,6 +13,7 @@ use App\models\Msg;
 use App\models\Product;
 use App\models\ProductAttach;
 use App\models\ProductPic;
+use App\models\ProductTrailer;
 use App\models\Project;
 use App\models\ProjectAttach;
 use App\models\ProjectBuyers;
@@ -567,12 +568,35 @@ class HomeController extends Controller {
 
         $product->attach = $pics;
 
+
+
+        $tmpPics = ProductTrailer::whereProductId($product->id)->get();
+        $pics = [];
+
+        foreach ($tmpPics as $tmpPic) {
+
+            $type = explode(".", $tmpPic->name);
+            $type = $type[count($type) - 1];
+
+            if(file_exists(__DIR__ . '/../../../public/productPic/' . $tmpPic->name))
+                $pics[count($pics)] = [
+                    "path" => URL::asset('productPic/' . $tmpPic->name),
+                    "type" => $type
+                ];
+
+        }
+
+        $product->trailer = $pics;
+
+
+
         if($product->price == 0)
             $product->price = "رایگان";
         else
             $product->price = number_format($product->price);
 
-        $bookmark = (Bookmark::whereUserId(Auth::user()->id)->whereItemId($id)->whereMode(getValueInfo('productMode'))->count() > 0);
+//        $bookmark = (Bookmark::whereUserId(Auth::user()->id)->whereItemId($id)->whereMode(getValueInfo('productMode'))->count() > 0);
+        $bookmark = true;
         $like = (Likes::whereUserId(Auth::user()->id)->whereItemId($id)->whereMode(getValueInfo('productMode'))->count() > 0);
 
         $canBuy = true;
@@ -1017,4 +1041,14 @@ class HomeController extends Controller {
     public function myServices() {
         return Redirect::route("profile");
     }
+
+
+    public function rules() {
+        return view("rules");
+    }
+
+    public function contactUs() {
+        return view("contactUs");
+    }
+
 }
