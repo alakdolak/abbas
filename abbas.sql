@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 13, 2020 at 08:36 AM
+-- Generation Time: Jul 14, 2020 at 11:22 AM
 -- Server version: 10.1.34-MariaDB
 -- PHP Version: 7.2.8
 
@@ -61,7 +61,7 @@ CREATE TABLE `chat` (
 --
 
 INSERT INTO `chat` (`id`, `user_id`, `created_at`, `updated_at`) VALUES
-(12, 1, '2020-07-13 01:36:20', '2020-07-13 01:36:20');
+(13, 2, '2020-07-13 11:07:29', '2020-07-13 11:07:29');
 
 -- --------------------------------------------------------
 
@@ -81,7 +81,8 @@ CREATE TABLE `common_question` (
 --
 
 INSERT INTO `common_question` (`id`, `category_id`, `question`, `answer`) VALUES
-(5, 5, '<p>asdsada</p>\r\n', '<p>sadasdas</p>\r\n');
+(5, 5, '<p>asdsada</p>\r\n', '<p>sadasdas</p>\r\n'),
+(6, 7, '<p>asdsadsaxz</p>\r\n', '<p>sadsxz</p>\r\n\r\n<p>sa</p>\r\n');
 
 -- --------------------------------------------------------
 
@@ -94,15 +95,17 @@ CREATE TABLE `config` (
   `initial_point` int(11) NOT NULL DEFAULT '1000',
   `id` int(11) NOT NULL,
   `initial_star` int(11) NOT NULL DEFAULT '0',
-  `project_limit` int(11) NOT NULL
+  `project_limit` int(11) NOT NULL,
+  `rev_change_rate` double NOT NULL,
+  `service_limit` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `config`
 --
 
-INSERT INTO `config` (`change_rate`, `initial_point`, `id`, `initial_star`, `project_limit`) VALUES
-(20, 200, 1, 2, 2);
+INSERT INTO `config` (`change_rate`, `initial_point`, `id`, `initial_star`, `project_limit`, `rev_change_rate`, `service_limit`) VALUES
+(20, 200, 1, 2, 2, 0.03, 2);
 
 -- --------------------------------------------------------
 
@@ -121,7 +124,8 @@ CREATE TABLE `faq_category` (
 
 INSERT INTO `faq_category` (`id`, `name`) VALUES
 (5, 'C'),
-(6, 'A');
+(6, 'A'),
+(7, 'y');
 
 -- --------------------------------------------------------
 
@@ -186,8 +190,10 @@ CREATE TABLE `msg` (
 --
 
 INSERT INTO `msg` (`id`, `chat_id`, `text`, `is_me`, `created_at`, `updated_at`, `seen`) VALUES
-(53, 12, 'سلام', 1, '2020-07-13 01:36:20', '2020-07-13 01:36:20', 1),
-(54, 12, 'علیک سلام', 0, '2020-07-13 01:36:35', '2020-07-13 01:36:35', 1);
+(55, 13, 'salam', 1, '2020-07-13 11:07:29', '2020-07-13 11:07:29', 1),
+(56, 13, 'chetori', 1, '2020-07-13 11:07:40', '2020-07-13 11:07:40', 1),
+(57, 13, 'qweds', 0, '2020-07-13 06:38:16', '2020-07-13 06:38:16', 1),
+(58, 13, 'asdq', 1, '2020-07-13 11:08:24', '2020-07-13 11:08:24', 1);
 
 -- --------------------------------------------------------
 
@@ -214,7 +220,7 @@ CREATE TABLE `product` (
 
 INSERT INTO `product` (`id`, `user_id`, `name`, `price`, `description`, `created_at`, `updated_at`, `star`, `hide`, `project_id`) VALUES
 (3, 2, 'تست', 2000, '<p>شسیسظ</p>\r\n\r\n<p>ظطز</p>\r\n\r\n<p>ص</p>\r\n', '2020-07-12 09:54:16', '2020-07-12 09:54:16', 3, 0, 6),
-(4, 2, 'ططظ', 100, '<p>شس</p>\r\n\r\n<p>ضصی</p>\r\n\r\n<p>س</p>\r\n', '2020-07-12 09:55:54', '2020-07-12 09:55:54', 1, 0, 5);
+(4, 1, 'ططظ', 100, '<p>شس</p>\r\n\r\n<p>ضصی</p>\r\n\r\n<p>س</p>\r\n', '2020-07-12 09:55:54', '2020-07-12 09:55:54', 1, 0, 5);
 
 -- --------------------------------------------------------
 
@@ -270,7 +276,9 @@ INSERT INTO `product_pic` (`id`, `product_id`, `name`) VALUES
 (5, 3, '15945638573.png'),
 (6, 3, '159456385733.png'),
 (7, 3, '159456385734.png'),
-(8, 3, '1594563857قیمه.png');
+(8, 3, '1594563857قیمه.png'),
+(9, 5, '159464164134.png'),
+(10, 5, '159464164166.png');
 
 -- --------------------------------------------------------
 
@@ -309,7 +317,6 @@ CREATE TABLE `project` (
   `price` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `grade_id` int(11) NOT NULL,
   `start_reg` varchar(8) NOT NULL,
   `end_reg` varchar(8) NOT NULL,
   `hide` tinyint(1) NOT NULL DEFAULT '0'
@@ -319,11 +326,11 @@ CREATE TABLE `project` (
 -- Dumping data for table `project`
 --
 
-INSERT INTO `project` (`id`, `title`, `description`, `price`, `created_at`, `updated_at`, `grade_id`, `start_reg`, `end_reg`, `hide`) VALUES
-(5, 'asda', '<p>sad</p>\r\n\r\n<p>qwewq</p>\r\n', 300, '2020-07-10 09:31:52', '2020-07-10 09:31:52', 4, '13990417', '13990431', 0),
-(6, 'تست 2', '<p>تست بعدی</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>چک شود که درست باشد</p>\r\n', 600, '2020-07-10 11:56:14', '2020-07-12 07:32:51', 4, '13990420', '13990425', 0),
-(9, 'dsa', '<p>sda</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>zx</p>\r\n', 2000, '2020-07-10 13:28:14', '2020-07-12 07:32:53', 4, '13990412', '13990425', 0),
-(11, 'تست بعدی', '<p>شسیشس</p>\r\n\r\n<p>ظطزطظ</p>\r\n\r\n<p>ضس</p>\r\n', 400, '2020-07-11 04:47:47', '2020-07-11 04:47:47', 4, '13990420', '13990428', 0);
+INSERT INTO `project` (`id`, `title`, `description`, `price`, `created_at`, `updated_at`, `start_reg`, `end_reg`, `hide`) VALUES
+(5, 'asda', '<p>sad</p>\r\n\r\n<p>qwewq</p>\r\n', 300, '2020-07-10 09:31:52', '2020-07-10 09:31:52', '13990417', '13990431', 0),
+(6, 'تست 2', '<p>تست بعدی</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>چک شود که درست باشد</p>\r\n', 600, '2020-07-10 11:56:14', '2020-07-12 07:32:51', '13990420', '13990425', 0),
+(9, 'dsa', '<p>sda</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>zx</p>\r\n', 2000, '2020-07-10 13:28:14', '2020-07-12 07:32:53', '13990412', '13990425', 0),
+(11, 'تست بعدی', '<p>شسیشس</p>\r\n\r\n<p>ظطزطظ</p>\r\n\r\n<p>ضس</p>\r\n', 400, '2020-07-11 04:47:47', '2020-07-11 04:47:47', '13990420', '13990428', 0);
 
 -- --------------------------------------------------------
 
@@ -369,8 +376,32 @@ CREATE TABLE `project_buyers` (
 --
 
 INSERT INTO `project_buyers` (`id`, `user_id`, `project_id`, `created_at`, `updated_at`, `status`) VALUES
-(3, 2, 6, '2020-07-10 17:27:17', '2020-07-12 09:54:16', 1),
-(4, 2, 5, '2020-07-10 17:27:35', '2020-07-12 09:55:54', 1);
+(3, 1, 6, '2020-07-10 17:27:17', '2020-07-12 09:54:16', 1),
+(4, 2, 5, '2020-07-10 17:27:35', '2020-07-12 09:55:54', 1),
+(5, 2, 11, '2020-07-13 11:36:11', '2020-07-13 07:30:41', 1),
+(6, 1, 11, '2020-07-13 16:57:58', '2020-07-13 16:57:58', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_grade`
+--
+
+CREATE TABLE `project_grade` (
+  `id` int(11) NOT NULL,
+  `project_id` int(11) NOT NULL,
+  `grade_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `project_grade`
+--
+
+INSERT INTO `project_grade` (`id`, `project_id`, `grade_id`) VALUES
+(1, 5, 4),
+(2, 6, 4),
+(3, 9, 4),
+(4, 11, 4);
 
 -- --------------------------------------------------------
 
@@ -421,6 +452,7 @@ INSERT INTO `project_tag` (`id`, `tag_id`, `project_id`) VALUES
 (6, 2, 5),
 (4, 3, 6),
 (3, 2, 9),
+(7, 3, 9),
 (1, 1, 11);
 
 -- --------------------------------------------------------
@@ -447,7 +479,8 @@ CREATE TABLE `service` (
 
 INSERT INTO `service` (`id`, `title`, `description`, `star`, `hide`, `created_at`, `updated_at`, `grade_id`, `capacity`) VALUES
 (1, 'zxsd', '<p>asdwqwdsadsa</p>\r\n', 3, 0, '2020-07-12 10:44:25', '2020-07-12 10:44:25', 4, 2),
-(2, 'cdasq', '<p>xxzc</p>\r\n\r\n<p>sdwq</p>\r\n\r\n<p>asd</p>\r\n', 3, 0, '2020-07-13 01:41:54', '2020-07-13 01:41:54', 4, 3);
+(2, 'cdasq', '<p>xxzc</p>\r\n\r\n<p>sdwq</p>\r\n\r\n<p>asd</p>\r\n', 3, 0, '2020-07-13 01:41:54', '2020-07-13 01:41:54', 4, 3),
+(3, 'dassd', '<p>sadasdsa</p>\r\n', 2, 0, '2020-07-13 07:31:51', '2020-07-13 07:31:51', 4, 3);
 
 -- --------------------------------------------------------
 
@@ -468,7 +501,29 @@ CREATE TABLE `service_buyer` (
 --
 
 INSERT INTO `service_buyer` (`id`, `service_id`, `user_id`, `status`, `star`) VALUES
-(1, 1, 1, 1, 0);
+(2, 1, 1, 1, 0),
+(3, 2, 1, 1, 2),
+(4, 1, 2, 0, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `service_grade`
+--
+
+CREATE TABLE `service_grade` (
+  `id` int(11) NOT NULL,
+  `grade_id` int(11) NOT NULL,
+  `service_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `service_grade`
+--
+
+INSERT INTO `service_grade` (`id`, `grade_id`, `service_id`) VALUES
+(1, 4, 2),
+(2, 4, 1);
 
 -- --------------------------------------------------------
 
@@ -490,7 +545,9 @@ INSERT INTO `service_pic` (`id`, `service_id`, `name`) VALUES
 (1, 1, '15945668653.png'),
 (2, 1, '159456686533.png'),
 (3, 1, '159456686534.png'),
-(4, 1, '1594566865قیمه.png');
+(4, 1, '1594566865قیمه.png'),
+(5, 3, '159464171111.png'),
+(6, 3, '159464171112.png');
 
 -- --------------------------------------------------------
 
@@ -528,6 +585,13 @@ CREATE TABLE `transactions` (
   `follow_code` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `transactions`
+--
+
+INSERT INTO `transactions` (`id`, `user_id`, `product_id`, `status`, `created_at`, `updated_at`, `follow_code`) VALUES
+(3, 1, 4, 0, '2020-07-13 12:29:21', '2020-07-13 12:29:21', 53070);
+
 -- --------------------------------------------------------
 
 --
@@ -557,8 +621,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `first_name`, `last_name`, `nid`, `level`, `updated_at`, `remember_token`, `phone_num`, `status`, `created_at`, `money`, `grade_id`, `stars`) VALUES
-(1, 'admin', '$2y$10$OOQJFnUhp0GkNmOi7FWwOui0oLUe2UtqKroGVIDVcCJygb8gpoQb6', 'محمد', 'قانع', '0018914373', 3, '2020-07-12 16:12:42', 'wV5l3LYPHtVaCUHKkPOLTB6umTAYvTHZwUjpPtXOCR73wPNRhueLFVWCSixc', '09214915905', 1, '', 1840, 4, 9),
-(2, 'ahmad', '$2y$10$YIuKpCu6TIRyKcImSinoQuk3zVV.Tm2c7GiooTLAgXLxvAIe4LA/i', 'احمد', 'رضایی', '0020033087', 1, '2020-07-10 11:04:07', 'HeK5UfuuHihElQJGuSKvo6qfCJVgEQKFc8uaVM24LqL4O3cqldhRdu2RAE4X', '09121593106', 1, '2020-07-10 10:38:50', 200, 4, 2),
+(1, 'admin', '$2y$10$OOQJFnUhp0GkNmOi7FWwOui0oLUe2UtqKroGVIDVcCJygb8gpoQb6', 'محمد', 'قانع', '0018914373', 3, '2020-07-13 16:59:21', 'MQ6QhKFVAyCShzG6fPmaFeDWilgRWnJiNpK9YGBE09etwpLUkjYKDZAp1Zmx', '09214915905', 1, '', 1340, 4, 15),
+(2, 'ahmad', '$2y$10$YIuKpCu6TIRyKcImSinoQuk3zVV.Tm2c7GiooTLAgXLxvAIe4LA/i', 'احمد', 'رضایی', '0020033087', 1, '2020-07-13 16:06:11', '4zh9It4VroNd6zWwnCt1wipWZNf8PD5ttiec5iDawxf6J7G30MSOXMOGUhRc', '09121593106', 1, '2020-07-10 10:38:50', 800, 4, 5),
 (3, 'hosein', '$2y$10$kVhdNktk3n8zbc57Yfxrg.U6oiFX/fmq5ISjUlBISyI11Awe4Tag6', 'حسین', 'نوری', '0074804456', 1, '2020-07-12 12:21:30', NULL, '09356602828', 0, '2020-07-10 10:38:50', 300, 4, 3),
 (4, 'hasan', '$2y$10$0MTpZ3ja7SS8gMNpHP9oVu3dI1cT7dkP.SsfsJeIPU8vxzhkBNZR2', 'حسن', 'سلامت', '3861338300', 1, '2020-07-10 11:03:36', NULL, '09124793481', 1, '2020-07-10 10:38:50', 200, 4, 2);
 
@@ -656,8 +720,7 @@ ALTER TABLE `product_trailer`
 -- Indexes for table `project`
 --
 ALTER TABLE `project`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `grade_id` (`grade_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `project_attach`
@@ -673,6 +736,14 @@ ALTER TABLE `project_buyers`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `project_id` (`project_id`);
+
+--
+-- Indexes for table `project_grade`
+--
+ALTER TABLE `project_grade`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `project_id` (`project_id`),
+  ADD KEY `grade_id` (`grade_id`);
 
 --
 -- Indexes for table `project_pic`
@@ -704,6 +775,14 @@ ALTER TABLE `service_buyer`
   ADD PRIMARY KEY (`id`),
   ADD KEY `service_id` (`service_id`),
   ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `service_grade`
+--
+ALTER TABLE `service_grade`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `grade_id` (`grade_id`),
+  ADD KEY `service_id` (`service_id`);
 
 --
 -- Indexes for table `service_pic`
@@ -750,13 +829,13 @@ ALTER TABLE `bookmarks`
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `common_question`
 --
 ALTER TABLE `common_question`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `config`
@@ -768,7 +847,7 @@ ALTER TABLE `config`
 -- AUTO_INCREMENT for table `faq_category`
 --
 ALTER TABLE `faq_category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `grade`
@@ -786,13 +865,13 @@ ALTER TABLE `likes`
 -- AUTO_INCREMENT for table `msg`
 --
 ALTER TABLE `msg`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `product_attach`
@@ -804,7 +883,7 @@ ALTER TABLE `product_attach`
 -- AUTO_INCREMENT for table `product_pic`
 --
 ALTER TABLE `product_pic`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `product_trailer`
@@ -828,6 +907,12 @@ ALTER TABLE `project_attach`
 -- AUTO_INCREMENT for table `project_buyers`
 --
 ALTER TABLE `project_buyers`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `project_grade`
+--
+ALTER TABLE `project_grade`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
@@ -840,25 +925,31 @@ ALTER TABLE `project_pic`
 -- AUTO_INCREMENT for table `project_tag`
 --
 ALTER TABLE `project_tag`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `service`
 --
 ALTER TABLE `service`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `service_buyer`
 --
 ALTER TABLE `service_buyer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `service_grade`
+--
+ALTER TABLE `service_grade`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `service_pic`
 --
 ALTER TABLE `service_pic`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `tag`
@@ -870,7 +961,7 @@ ALTER TABLE `tag`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
