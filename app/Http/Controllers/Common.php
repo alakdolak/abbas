@@ -239,6 +239,18 @@ function convertDateToString($date) {
     return $subStrD[0] . $subStrD[1] . $subStrD[2];
 }
 
+function convertDateToString2($date, $delimeter) {
+    $subStrD = explode($delimeter, $date);
+
+    if($subStrD[1] < 10)
+        $subStrD[1] = "0" . $subStrD[1];
+
+    if($subStrD[2] < 10)
+        $subStrD[2] = "0" . $subStrD[2];
+
+    return $subStrD[0] . $subStrD[1] . $subStrD[2];
+}
+
 function convertStringToTime($time) {
     return $time[0] . $time[1] . ":" . $time[2] . $time[3];
 }

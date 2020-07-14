@@ -254,11 +254,18 @@ class HomeController extends Controller {
 
         $grade = Auth::user()->grade_id;
 
-        $services = DB::select('select id, title, description, star, capacity from service where ' .
+        $services = DB::select('select id, title, description, star, capacity, created_at from service where ' .
             '(select count(*) from service_grade where service_id = service.id and grade_id = ' . $grade . ' ) > 0'.
             ' and hide = false order by id desc');
 
+        $today = getToday()["date"];
+
         foreach ($services as $service) {
+
+            $date = MiladyToShamsi('', explode('-', explode(' ', $service->created_at)[0]));
+            $date = convertDateToString2($date, "-");
+
+            $service->week = floor(($today - $date) / 7.0);
 
             $tmpPic = ServicePic::whereServiceId($service->id)->first();
 
@@ -340,11 +347,13 @@ class HomeController extends Controller {
         $grade = Auth::user()->grade_id;
         $date = getToday()["date"];
 
-        $projects = DB::select('select id, title, description, price, capacity from project where ' .
+        $projects = DB::select('select id, title, description, price, capacity, start_reg from project where ' .
             '(select count(*) from project_grade where project_id = project.id and grade_id = ' . $grade . ' ) > 0' .
             ' and start_reg <= ' . $date . ' and end_reg >= ' . $date . ' and hide = false order by id desc');
 
         foreach ($projects as $project) {
+
+            $project->week = floor(($date - $project->start_reg) / 7.0);
 
             $tmpPic = ProjectPic::whereProjectId($project->id)->first();
 
@@ -468,12 +477,18 @@ class HomeController extends Controller {
 
         $grade = Auth::user()->grade_id;
 
+        $today = getToday()["date"];
         $products = DB::select('select p.id, name, description, price, star, project_id, ' .
-            'concat(u.first_name, " ", u.last_name) as owner' .
+            'concat(u.first_name, " ", u.last_name) as owner, p.created_at' .
             ' from product p, users u where ' .
             'p.user_id = u.id and u.grade_id = ' . $grade . ' and hide = false order by p.id desc');
 
         foreach ($products as $product) {
+
+            $date = MiladyToShamsi('', explode('-', explode(' ', $product->created_at)[0]));
+            $date = convertDateToString2($date, "-");
+
+            $product->week = floor(($today - $date) / 7.0);
 
             $tmpPic = ProductPic::whereProductId($product->id)->first();
 
