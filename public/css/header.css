@@ -66,20 +66,20 @@
 }
 .profilePopUp {
     position: absolute;
-    width: 150px;
+    width: 175px;
     padding: 10px 15px;
     background-color: #f2f2f2;
     border: 5px solid #c5c5c5;
     border-radius: 7px;
     z-index: 1000000001 !important;
     margin-top: 20px;
-    left: -5px;
+    left: -20px;
     cursor: context-menu;
 }
 .rightArrowIcon {
     position: absolute;
     top: -20px;
-    left: 10%;
+    left: 20%;
     transform: rotate(180deg);
     font-size: 2.5em;
     color: #c5c5c5;
