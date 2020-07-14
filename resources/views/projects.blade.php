@@ -38,17 +38,20 @@
                                         <div class="priceText">قیمت: {{$project->price}} سکه</div>
                                     @endif
                                 </div>
+
+                                <p class="sh_descriptRow sh_title" style="direction: rtl; text-align: right">
+                                    @foreach($project->tags as $tag)
+                                        <span>#{{$tag->name}}</span>
+                                        <span>&nbsp;&nbsp;</span>
+                                    @endforeach
+                                </p>
+
                             </div>
-
-                            <p style="direction: rtl; text-align: right">
-                                @foreach($project->tags as $tag)
-                                    <span>#{{$tag->name}}</span>
-                                    <span>&nbsp;&nbsp;</span>
-                                @endforeach
-                            </p>
-
                         </div>
 
+                        <div class="sh_ownerBox">
+                            <div style="font-size: 0.9em">سفارش دهنده: مدرسه سراج</div>
+                        </div>
                     </div>
                 @endforeach
 

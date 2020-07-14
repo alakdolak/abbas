@@ -37,12 +37,15 @@
                                     <div class="priceIcons starIcon"></div>
                                     <div class="priceText">ستاره ی دریافتی: {{$service->star}}</div>
                                 </div>
+
+                                <div class="sh_descriptRow sh_title">ظرفیت: {{$service->capacity}}</div>
+
                             </div>
 
                         </div>
 
                         <div class="sh_ownerBox">
-                            <div></div>
+                            <div style="font-size: 0.9em">سفارش دهنده: مدرسه سراج</div>
                         </div>
 
                     </div>

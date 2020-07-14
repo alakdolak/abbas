@@ -13,10 +13,12 @@ use App\models\ProductTrailer;
 use App\models\Project;
 use App\models\ProjectAttach;
 use App\models\ProjectBuyers;
+use App\models\ProjectGrade;
 use App\models\ProjectPic;
 use App\models\ProjectTag;
 use App\models\Service;
 use App\models\ServiceBuyer;
+use App\models\ServiceGrade;
 use App\models\ServicePic;
 use App\models\ServiceTag;
 use App\models\Tag;
@@ -304,19 +306,26 @@ class OperatorController extends Controller {
     public function addService() {
 
         if(isset($_POST["name"]) && isset($_POST["description"])
-            && isset($_POST["star"]) && isset($_POST["gradeId"]) && isset($_POST["capacity"])
+            && isset($_POST["star"]) && isset($_POST["grades"]) && isset($_POST["capacity"])
         ) {
 
             $service = new Service();
             $service->title = makeValidInput($_POST["name"]);
             $service->description = $_POST["description"];
             $service->star = makeValidInput($_POST["star"]);
-            $service->grade_id = makeValidInput($_POST["gradeId"]);
             $service->capacity = makeValidInput($_POST["capacity"]);
 
             try {
 
                 $service->save();
+
+                $grades = $_POST["grades"];
+                foreach ($grades as $grade) {
+                    $tmp = new ServiceGrade();
+                    $tmp->grade_id = makeValidInput($grade);
+                    $tmp->service_id = $service->id;
+                    $tmp->save();
+                }
 
                 if(isset($_FILES["file"]) && !empty($_FILES["file"]["name"])) {
 
@@ -372,7 +381,7 @@ class OperatorController extends Controller {
     public function addProject() {
 
         if(isset($_POST["name"]) && isset($_POST["description"])
-            && isset($_POST["price"]) && isset($_POST["gradeId"])
+            && isset($_POST["price"]) && isset($_POST["grades"])
             && isset($_POST["start_reg"]) && isset($_POST["end_reg"])
         ) {
 
@@ -380,13 +389,23 @@ class OperatorController extends Controller {
             $project->title = makeValidInput($_POST["name"]);
             $project->description = $_POST["description"];
             $project->price = makeValidInput($_POST["price"]);
-            $project->grade_id = makeValidInput($_POST["gradeId"]);
             $project->start_reg = convertDateToString(makeValidInput($_POST["start_reg"]));
             $project->end_reg = convertDateToString(makeValidInput($_POST["end_reg"]));
 
             try {
 
                 $project->save();
+
+                $grades = $_POST["grades"];
+
+                foreach ($grades as $grade) {
+
+                    $tmp = new ProjectGrade();
+                    $tmp->grade_id = makeValidInput($grade);
+                    $tmp->project_id = $project->id;
+                    $tmp->save();
+                }
+
 
                 if(isset($_FILES["file"]) && !empty($_FILES["file"]["name"])) {
 

@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
  * An Eloquent Model: 'Project'
  *
  * @property integer $id
- * @property integer $grade_id
  * @property string $title
  * @property boolean $hide
  * @property string $description
