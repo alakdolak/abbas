@@ -3,7 +3,36 @@
 @section('header')
     @parent
 
-    <div class=""></div>
+    <div class="eachProduct row">
+        <div class="col-lg-4 col-xs-12">
+            <div class="pr_pics">
+                <div class="pr_mainPic"></div>
+                <div class="pr_otherPics"></div>
+            </div>
+            <div class="shopBtn"></div>
+        </div>
+
+        <div class="pr_descript col-lg-8 col-xs-12">
+            <div class="pr_title"></div>
+            <div class="pr_salesman"></div>
+            <div class="pr_priceBox">
+                <div class="pr_icons coinIcon"></div>
+                <div></div>
+            </div>
+            <div class="pr_priceBox">
+                <div class="pr_icons starIcon"></div>
+                <div></div>
+            </div>
+            <div class="pr_descriptBox">
+                <div class="pr_icons folderIcon"></div>
+                <div></div>
+            </div>
+            <div class="pr_advertiseBox">
+                <div class="pr_icons movieIcon"></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
 
     <script>
 
