@@ -113,15 +113,15 @@
 
     <div class="eachProduct row">
         <div class="pr_descript col-lg-7 col-xs-12">
-            <div class="pr_descriptRow pr_title">پروژه ی کیف دستی</div>
-            <div class="pr_descriptRow pr_salesman">فروشنده: آقای حاجی قاسمی</div>
+            <div class="pr_descriptRow pr_title">{{$product->name}}</div>
+            <div class="pr_descriptRow pr_salesman">فروشنده: {{$product->owner}}</div>
             <div class="pr_descriptRow pr_iconesBox">
                 <div class="pr_icons coinIcon"></div>
-                <div>قیمت: 300 سکه</div>
+                <div>قیمت: {{$product->price}} سکه</div>
             </div>
             <div class="pr_descriptRow pr_iconesBox">
                 <div class="pr_icons starIcon"></div>
-                <div>ستاره ی دریافتی: 20</div>
+                <div>ستاره ی دریافتی: {{$product->star}}</div>
             </div>
             <div class="pr_descriptRow">
                 <div class="pr_iconesBox">
@@ -129,7 +129,7 @@
                     <div>توضیحات:</div>
                 </div>
                 <div class="pr_description">
-                    <div>توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست.</div>
+                    <div>{!! $product->description !!}</div>
                 </div>
             </div>
         </div>
@@ -141,9 +141,11 @@
                     <div class="pr_eachOtherPics"></div>
                     <div class="pr_eachOtherPics"></div>
                 </div>
-                <div class="pr_mainPic"></div>
+                <div style="background-image: url('{{$product->pics[0]}}'); background-size: contain" class="pr_mainPic"></div>
             </div>
-            <div onclick="buy()" class="shopBtn">خرید محصول</div>
+            @if($canBuy)
+                <div onclick="buy()" class="shopBtn">خرید محصول</div>
+            @endif
             <div class="eachProduct row">
 
                 <div class="col-lg-4 col-xs-12">
