@@ -85,3 +85,16 @@
     color: #f37053;
     border-bottom: 2px solid #f37053 !important;
 }
+
+/*the css of shopping Box*/
+.shopBox {
+    margin: 0 12% !important;
+}
+
+.shopOneRow {
+    padding: 0 !important;
+}
+
+.shopOneBox {
+    border: 2px solid #a1a1a1;
+}

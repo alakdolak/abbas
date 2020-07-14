@@ -1,7 +1,7 @@
 .header {
     height: 110px;
     background-color: #ffc20e;
-    border-bottom: 10px solid #f9f9f9;
+    border-bottom: 10px solid #f2f2f2;
     padding: 0 12%;
     position: relative;
 }
@@ -49,6 +49,8 @@
     cursor: pointer;
     margin: 0 10px;
     text-align: center;
+    font-size: 1.1em;
+    font-weight: 700;
 }
 
 .headerNavbar:hover {
