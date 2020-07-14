@@ -25,12 +25,11 @@ a {
 }
 
 .firstWeek {
-    background: #ef394e;
     height: 780px;
 }
 
 .secondWeek {
-    background: #6bb927;
+    /*background: #6bb927;*/
 }
 
 .c-swiper-specials {
