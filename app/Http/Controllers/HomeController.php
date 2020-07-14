@@ -16,6 +16,7 @@ use App\models\ProductPic;
 use App\models\Project;
 use App\models\ProjectAttach;
 use App\models\ProjectBuyers;
+use App\models\ProjectGrade;
 use App\models\ProjectPic;
 use App\models\Service;
 use App\models\ServiceBuyer;
@@ -343,7 +344,7 @@ class HomeController extends Controller {
                 $project->price = number_format($project->price);
 
             $project->likes = Likes::whereItemId($project->id)->whereMode(getValueInfo('projectMode'))->count();
-            $project->tags = DB::select("select t.name, p.id from tag t, project_tag p where t.id = p.tag_id and p.project_id = " . $project->id);
+            $project->tags = DB::select("select t.name, t.id from tag t, project_tag p where t.id = p.tag_id and p.project_id = " . $project->id);
             $str = "-";
             foreach ($project->tags as $tag)
                 $str .= $tag->id . '-';
@@ -358,10 +359,26 @@ class HomeController extends Controller {
         $project = Project::whereId($id);
         $grade = Auth::user()->grade_id;
 
-        if($project == null || $project->hide ||
-            (Auth::user()->level == getValueInfo('studentLevel') && $grade != $project->grade_id)) {
+        if($project == null || $project->hide) {
             return Redirect::route('showAllProjects');
         }
+
+        if(Auth::user()->level == getValueInfo('studentLevel')) {
+
+            $grades = ProjectGrade::whereProjectId($project->id)->get();
+            $allow = false;
+
+            foreach ($grades as $itr) {
+                if ($itr->grade_id == $grade) {
+                    $allow = true;
+                    break;
+                }
+            }
+
+            if(!$allow)
+                return Redirect::route('home');
+        }
+
 
         $tmpPics = ProjectPic::whereProjectId($project->id)->get();
         $pics = [];
@@ -674,10 +691,30 @@ class HomeController extends Controller {
             $project = Project::whereId(makeValidInput($_POST["id"]));
             $user = Auth::user();
 
-            if($project == null || $project->hide || $project->grade_id != $user->grade_id) {
+            if($project == null || $project->hide) {
                 echo "nok1";
                 return;
             }
+
+
+            if(Auth::user()->level == getValueInfo('studentLevel')) {
+
+                $grades = ProjectGrade::whereProjectId($project->id)->get();
+                $allow = false;
+
+                foreach ($grades as $itr) {
+                    if ($itr->grade_id == $user->grade_id) {
+                        $allow = true;
+                        break;
+                    }
+                }
+
+                if(!$allow) {
+                    echo "nok1";
+                    return;
+                }
+            }
+
 
             if(ProjectBuyers::whereUserId($user->id)->whereProjectId($project->id)->count() > 0) {
                 echo "nok2";
