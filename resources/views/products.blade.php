@@ -20,94 +20,48 @@
 
 @section("content")
 
-    <div class="c-swiper-specials firstWeek">
-        <section class="container container--home" id="sn-carousels-incredible-offer">
-            <a class="c-swiper-specials__title c-swiper-specials__title--incredible"></a>
-            <div class="c-swiper c-swiper--products c-swiper--specials">
-                <div class="c-box">
-                    <div class="swiper-container swiper-container-horizontal js-swiper-specials swiper-container-rtl">
-                        <div class="swiper-wrapper" style="transform: translate3d(0px, 0px, 0px);">
-                            @for($i = 0; $i < 4; $i++)
-                                @foreach($products as $product)
-                                    <div class="myItem swiper-slide" style="margin-top: 20px" data-tag="{{$product->tagStr}}">
-                                        <li>
-                                            <a href="{{route('showProduct', ['id' => $product->id])}}" class="c-product-box__box-link"></a>
-                                            <div class="c-product-box c-product-box--product-card c-product-box--has-overflow c-product-box--card-macro">
-                                                <div class="c-product-box__img js-url js-snt-carousel_product">
-                                                    <img src="{{$product->pic}}" class="swiper-lazy swiper-lazy-loaded">
-                                                </div>
-                                                <div class="c-product-box__title">{{$product->name}}</div>
-                                                <div class="c-product-box__row c-product-box__row--price">
-                                                    <div class="c-price">
-                                                        <div class="c-price__value c-price__value--plp">
-                                                            <div class="c-price__value-wrapper">{{$product->price}} <span class="c-price__currency">سکه</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
 
-                                                    <p style="direction: rtl; text-align: right">
-                                                        @foreach($product->tags as $tag)
-                                                            <span>#{{$tag->name}}</span>
-                                                            <span>&nbsp;&nbsp;</span>
-                                                        @endforeach
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </div>
-                                @endforeach
-                            @endfor
-                        </div>
+    <div class="shopBox row">
+        <div class="shopEachRow col-lg-12">
 
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
+            <div class="shopEachRow shopEachRowTitle col-lg-12">پروژه های هفته ی اول</div>
 
-    <div class="c-swiper-specials secondWeek">
-        <section class="container container--home" id="sn-carousels-incredible-offer">
-            <a class="c-swiper-specials__title c-swiper-specials__title--incredible"></a>
-            <div class="c-swiper c-swiper--products c-swiper--specials">
-                <div class="c-box">
-                    <div class="swiper-container swiper-container-horizontal js-swiper-specials swiper-container-rtl">
-                        <div class="swiper-wrapper" style="transform: translate3d(0px, 0px, 0px);">
+            <div class="shopEachRow col-lg-12">
 
-                            @foreach($products as $product)
-                                <div class="myItem swiper-slide" data-tag="{{$product->tagStr}}">
-                                    <li>
-                                        <a href="{{route('showProduct', ['id' => $product->id])}}" class="c-product-box__box-link"></a>
-                                        <div class="c-product-box c-product-box--product-card c-product-box--has-overflow c-product-box--card-macro">
-                                            <div class="c-product-box__img js-url js-snt-carousel_product">
-                                                <img src="{{$product->pic}}" class="swiper-lazy swiper-lazy-loaded">
-                                            </div>
-                                            <div class="c-product-box__title">{{$product->name}}</div>
-                                            <div class="c-product-box__row c-product-box__row--price">
-                                                <div class="c-price">
-                                                    <div class="c-price__value c-price__value--plp">
-                                                        <div class="c-price__value-wrapper">{{$product->price}} <span class="c-price__currency">سکه</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <p style="direction: rtl; text-align: right">
-                                                    @foreach($product->tags as $tag)
-                                                        <span>#{{$tag->name}}</span>
-                                                        <span>&nbsp;&nbsp;</span>
-                                                    @endforeach
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </li>
+                @foreach($products as $product)
+                    <div data-tag="{{$product->tagStr}}" onclick="document.location.href = '{{route('showProduct', ['id' => $product->id])}}'" class="shopOneBox col-lg-3 col-xs-6">
+                        <div class="sh_mainBox">
+                            <div style="background-image: url('{{$product->pic}}')" class="sh_mainPic"></div>
+                            <div class="sh_descript">
+                                <div class="sh_descriptRow sh_title">{{$product->name}}</div>
+                                <div class="sh_descriptRow sh_priceBox">
+                                    <div class="priceIcons coinIcon"></div>
+                                    <div class="priceText">قیمت: {{$product->price}} سکه</div>
                                 </div>
-                            @endforeach
+                                <div class="sh_descriptRow sh_priceBox">
+                                    <div class="priceIcons starIcon"></div>
+                                    <div class="priceText">ستاره ی دریافتی: {{$product->star}}</div>
+                                </div>
+                            </div>
+
+                            <p style="direction: rtl; text-align: right">
+                                @foreach($product->tags as $tag)
+                                    <span>#{{$tag->name}}</span>
+                                    <span>&nbsp;&nbsp;</span>
+                                @endforeach
+                            </p>
 
                         </div>
 
+                        <div class="sh_ownerBox">
+                            <div>اثر: آقای حاجی قاسمی</div>
+                        </div>
                     </div>
-                </div>
+                @endforeach
+
             </div>
-        </section>
+        </div>
     </div>
+
 
 @stop
