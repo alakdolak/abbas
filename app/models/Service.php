@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property integer $id
  * @property integer $star
- * @property integer $grade_id
  * @property integer $capacity
  * @property boolean $hide
  * @property string $title

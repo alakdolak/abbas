@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property integer $initial_star
  * @property integer $change_rate
  * @property integer $project_limit
+ * @property integer $service_limit
  * @property double $rev_change_rate
  */
 

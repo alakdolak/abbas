@@ -19,6 +19,7 @@ use App\models\ProjectBuyers;
 use App\models\ProjectPic;
 use App\models\Service;
 use App\models\ServiceBuyer;
+use App\models\ServiceGrade;
 use App\models\ServicePic;
 use App\models\Tag;
 use App\models\Transaction;
@@ -245,7 +246,8 @@ class HomeController extends Controller {
 
         $grade = Auth::user()->grade_id;
 
-        $services = DB::select('select id, title, description, star, capacity from service where grade_id = ' . $grade .
+        $services = DB::select('select id, title, description, star, capacity from service where ' .
+            '(select count(*) from service_grade where service_id = service.id and grade_id = ' . $grade . ' ) > 0'.
             ' and hide = false order by id desc');
 
         foreach ($services as $service) {
@@ -269,9 +271,24 @@ class HomeController extends Controller {
         $service = Service::whereId($id);
         $grade = Auth::user()->grade_id;
 
-        if($service == null || $service->hide ||
-            (Auth::user()->level == getValueInfo('studentLevel') && $grade != $service->grade_id)) {
+        if($service == null || $service->hide) {
             return Redirect::route('home');
+        }
+
+        if(Auth::user()->level == getValueInfo('studentLevel')) {
+
+            $grades = ServiceGrade::whereServiceId($service->id)->get();
+            $allow = false;
+
+            foreach ($grades as $itr) {
+                if ($itr->grade_id == $grade) {
+                    $allow = true;
+                    break;
+                }
+            }
+
+            if(!$allow)
+                return Redirect::route('home');
         }
 
         $tmpPics = ServicePic::whereServiceId($service->id)->get();
@@ -307,7 +324,8 @@ class HomeController extends Controller {
         $grade = Auth::user()->grade_id;
         $date = getToday()["date"];
 
-        $projects = DB::select('select id, title, description, price from project where grade_id = ' . $grade .
+        $projects = DB::select('select id, title, description, price from project where ' .
+            '(select count(*) from project_grade where project_id = project.id and grade_id = ' . $grade . ' ) > 0' .
             ' and start_reg <= ' . $date . ' and end_reg >= ' . $date . ' and hide = false order by id desc');
 
         foreach ($projects as $project) {
@@ -728,6 +746,12 @@ class HomeController extends Controller {
                 return;
             }
 
+            $countBuys = Transaction::whereUserId($user->id)->count();
+            if(ProjectBuyers::whereUserId($user->id)->whereStatus(true)->count() <= $countBuys) {
+                echo "nok7";
+                return;
+            }
+
             if($product->price > $user->money) {
                 echo "nok3";
                 return;
@@ -766,8 +790,23 @@ class HomeController extends Controller {
                 return;
             }
 
-            if($service->grade_id != $user->grade_id) {
+            $grades = ServiceGrade::whereServiceId($service->id)->get();
+            $allow = false;
+
+            foreach ($grades as $grade) {
+                if($grade->grade_id == $user->grade_id) {
+                    $allow = true;
+                    break;
+                }
+            }
+
+            if(!$allow) {
                 echo "nok1";
+                return;
+            }
+
+            if(ServiceBuyer::whereUserId($user->id)->whereStatus(false)->count() >= ConfigModel::first()->service_limit) {
+                echo "nok7";
                 return;
             }
 
