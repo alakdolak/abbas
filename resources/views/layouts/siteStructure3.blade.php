@@ -50,6 +50,14 @@
                 @endforeach
             </div>
         </div>
+
+        <div class="shopBox row">
+            <div class="shopOneRow col-lg-12">
+                <div class="shopOneBox col-lg-4 col-xs-6">
+
+                </div>
+            </div>
+        </div>
     @endif
 
 
