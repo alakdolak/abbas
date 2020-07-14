@@ -21,10 +21,7 @@
 
     <div class="c-swiper-specials firstWeek">
         <section class="container container--home" id="sn-carousels-incredible-offer">
-            <a href="/incredible-offers/" class="c-swiper-specials__title c-swiper-specials__title--incredible" title="پیشنهاد شگفت&zwnj;انگیز">
-                <img src="https://www.digikala.com/static/files/b6c724a0.png" alt="پیشنهاد شگفت&zwnj;انگیز">
-                <div class="o-btn c-swiper-specials__btn">مشاهده همه</div>
-            </a>
+            <a class="c-swiper-specials__title c-swiper-specials__title--incredible"></a>
             <div class="c-swiper c-swiper--products c-swiper--specials">
                 <div class="c-box">
                     <div class="swiper-container swiper-container-horizontal js-swiper-specials swiper-container-rtl">
@@ -64,10 +61,7 @@
 
     <div class="c-swiper-specials secondWeek">
         <section class="container container--home" id="sn-carousels-incredible-offer">
-            <a href="/incredible-offers/" class="c-swiper-specials__title c-swiper-specials__title--incredible" title="پیشنهاد شگفت&zwnj;انگیز">
-                <img src="https://www.digikala.com/static/files/b6c724a0.png" alt="پیشنهاد شگفت&zwnj;انگیز">
-                <div class="o-btn c-swiper-specials__btn">مشاهده همه</div>
-            </a>
+            <a class="c-swiper-specials__title c-swiper-specials__title--incredible"></a>
             <div class="c-swiper c-swiper--products c-swiper--specials">
                 <div class="c-box">
                     <div class="swiper-container swiper-container-horizontal js-swiper-specials swiper-container-rtl">
