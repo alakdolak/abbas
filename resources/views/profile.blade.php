@@ -91,15 +91,28 @@
                 <div class="userProfileActivitiesMainDiv userActivitiesPhotos col-sm-8 col-xs-12">
                     <div class="userProfilePhotosAndVideos">
                         <div class="photosAndVideosMainDiv" id="myProjects">
-                            <div class="sharedPhotosAndVideos"></div>
-                            <div class="sharedPhotosAndVideos"></div>
-                            <div class="sharedPhotosAndVideos"></div>
-                            <div class="sharedPhotosAndVideos"></div>
+                            @foreach($myProjects as $buy)
+                                <div onclick="document.location.href = '{{route("showProject", ["id" => $buy->id])}}'" class="sharedPhotosAndVideos" style="font-size: 11px">
+                                    <img style="width: 50%; padding: 10px" src="{{$buy->pic}}">
+                                    <p>{{$buy->title}}</p>
+                                    <span>{{$buy->price}}سکه </span>
+                                    <span>&nbsp;&nbsp;&nbsp;</span>
+                                    <span>تاریخ پذیرش پروژه {{$buy->date}}</span>
+
+                                    @if($buy->status)
+                                        <p>وضعیت: تمام شده</p>
+                                    @else
+                                        <p>وضعیت: در حال انجام</p>
+                                    @endif
+
+                                    <p>{{$buy->tagStr}}</p>
+                                </div>
+                            @endforeach
                         </div>
                         <div class="photosAndVideosMainDiv display-none" id="myProducts">
                             @foreach($myProducts as $buy)
                                 <div onclick="document.location.href = '{{route("showProduct", ["id" => $buy->id])}}'" class="sharedPhotosAndVideos" style="font-size: 11px">
-                                    <img style="width: 70%; padding: 10px" src="{{$buy->pic}}">
+                                    <img style="width: 50%; padding: 10px" src="{{$buy->pic}}">
                                     <p>{{$buy->name}}</p>
                                     <span>{{$buy->price}}سکه </span>
                                     <span>&nbsp;&nbsp;&nbsp;</span>
@@ -107,14 +120,17 @@
                                     <span>&nbsp;&nbsp;&nbsp;</span>
                                     <span>تاریخ ورود محصول به بازار {{$buy->date}}</span>
                                     <span>&nbsp;&nbsp;&nbsp;</span>
-{{--                                    <span>خریدار: {{$buy->seller}}</span>--}}
+                                    <span>خریدار: {{$buy->buyer}}</span>
+
+                                    <p>{{$buy->tagStr}}</p>
+
                                 </div>
                             @endforeach
                         </div>
                         <div class="photosAndVideosMainDiv display-none" id="myServices">
                             @foreach($myServices as $service)
                                 <div onclick="document.location.href = '{{route('showService', ['id' => $service->id])}}'" class="sharedPhotosAndVideos" style="font-size: 11px">
-                                    <img style="width: 70%; padding: 10px" src="{{$service->pic}}">
+                                    <img style="width: 50%; padding: 10px" src="{{$service->pic}}">
                                     <p>{{$service->title}}</p>
                                     <span>{{$service->star}}ستاره کل خدمت</span>
                                     <span>&nbsp;&nbsp;&nbsp;</span>
@@ -127,13 +143,14 @@
                                     @else
                                         <span>انجام نشده</span>
                                     @endif
+
                                 </div>
                             @endforeach
                         </div>
                         <div class="photosAndVideosMainDiv display-none" id="myCarts">
                             @foreach($myBuys as $buy)
                                 <div onclick="document.location.href = '{{route("showProduct", ["id" => $buy->id])}}'" class="sharedPhotosAndVideos" style="font-size: 11px">
-                                    <img style="width: 70%; padding: 10px" src="{{$buy->pic}}">
+                                    <img style="width: 50%; padding: 10px" src="{{$buy->pic}}">
                                     <p>{{$buy->name}}</p>
                                     <span>{{$buy->price}}سکه </span>
                                     <span>&nbsp;&nbsp;&nbsp;</span>
@@ -142,6 +159,18 @@
                                     <span>تاریخ خرید {{$buy->date}}</span>
                                     <span>&nbsp;&nbsp;&nbsp;</span>
                                     <span>فروشنده: {{$buy->seller}}</span>
+
+                                    @if($buy->status)
+                                        <p>مرسوله به دست خریدار رسیده است.</p>
+                                    @else
+                                        <p>
+                                            مرسوله به دست خریدار نرسیده است.
+                                        </p>
+                                        <p>کد پیگیری محصول: {{$buy->follow_code}}</p>
+                                    @endif
+
+                                    <p>{{$buy->tagStr}}</p>
+
                                 </div>
                             @endforeach
                         </div>

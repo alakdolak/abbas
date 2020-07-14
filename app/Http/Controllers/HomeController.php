@@ -54,7 +54,8 @@ class HomeController extends Controller {
 //        )
 //            return view('adminProfile');
 
-        $myBuys = DB::select("select p.id, t.status, p.name, concat(u.first_name, ' ', u.last_name) as seller, pb.project_id, p.price, p.star, t.created_at from transactions t, product p, project_buyers pb, users u where " .
+        $myBuys = DB::select("select p.id, t.status, p.name, concat(u.first_name, ' ', u.last_name) as seller, " .
+            "pb.project_id, p.price, p.star, t.follow_code, t.created_at from transactions t, product p, project_buyers pb, users u where " .
             " u.id = pb.user_id and pb.project_id = p.project_id and " .
             " t.product_id = p.id and t.user_id = " . Auth::user()->id);
 
@@ -64,9 +65,18 @@ class HomeController extends Controller {
 
             $tags = DB::select("select t.name, t.id from tag t, project_tag p where t.id = p.tag_id and p.project_id = " . $myBuy->project_id);
 
-            $str = "-";
-            foreach ($tags as $tag)
-                $str .= $tag->id . '-';
+            $str = "";
+            $first = true;
+
+            foreach ($tags as $tag) {
+                if($first) {
+                    $str .= "#" . $tag->name;
+                    $first = false;
+                }
+                else {
+                    $str .= " #" . $tag->name;
+                }
+            }
 
             $myBuy->tagStr = $str;
 
@@ -80,8 +90,8 @@ class HomeController extends Controller {
         }
 
 
-        $myProducts = DB::select("select p.* from product p, project_buyers pb where " .
-            "p.project_id = pb.project_id and pb.status = true and pb.user_id = " . Auth::user()->id);
+        $myProducts = DB::select("select * from product where " .
+            "user_id = " . Auth::user()->id);
 
         foreach ($myProducts as $myBuy) {
 
@@ -89,9 +99,18 @@ class HomeController extends Controller {
 
             $tags = DB::select("select t.name, t.id from tag t, project_tag p where t.id = p.tag_id and p.project_id = " . $myBuy->project_id);
 
-            $str = "-";
-            foreach ($tags as $tag)
-                $str .= $tag->id . '-';
+            $str = "";
+            $first = true;
+
+            foreach ($tags as $tag) {
+                if($first) {
+                    $str .= "#" . $tag->name;
+                    $first = false;
+                }
+                else {
+                    $str .= " #" . $tag->name;
+                }
+            }
 
             $myBuy->tagStr = $str;
 
@@ -102,6 +121,48 @@ class HomeController extends Controller {
             else
                 $myBuy->pic = URL::asset('productPic/' . $tmpPic->name);
 
+            $t = Transaction::whereProductId($myBuy->id)->first();
+            if($t != null) {
+                $u = User::whereId($t->user_id);
+                $myBuy->buyer = $u->first_name . ' ' . $u->last_name;
+            }
+            else {
+                $myBuy->buyer = "هنوز به فروش نرسیده است.";
+            }
+
+        }
+
+
+        $myProjects = DB::select("select p.*, pb.status from project p, project_buyers pb where " .
+            "p.id = pb.project_id and pb.user_id = " . Auth::user()->id);
+
+        foreach ($myProjects as $myProject) {
+
+            $myProject->date = MiladyToShamsi('', explode('-', explode(' ', $myProject->created_at)[0]));
+
+            $tags = DB::select("select t.name, t.id from tag t, project_tag p where t.id = p.tag_id and p.project_id = " . $myProject->id);
+
+            $str = "";
+            $first = true;
+
+            foreach ($tags as $tag) {
+                if($first) {
+                    $str .= "#" . $tag->name;
+                    $first = false;
+                }
+                else {
+                    $str .= " #" . $tag->name;
+                }
+            }
+
+            $myProject->tagStr = $str;
+
+            $tmpPic = ProjectPic::whereProjectId($myProject->id)->first();
+
+            if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/projectPic/' . $tmpPic->name))
+                $myProject->pic = URL::asset('projectPic/defaultPic.jpg');
+            else
+                $myProject->pic = URL::asset('projectPic/' . $tmpPic->name);
         }
 
 
@@ -121,7 +182,7 @@ class HomeController extends Controller {
         }
 
         return view('profile', ['myBuys' => $myBuys, "myServices" => $myServices,
-            "myProducts" => $myProducts]);
+            "myProducts" => $myProducts, 'myProjects' => $myProjects]);
     }
 
     public function faq() {
