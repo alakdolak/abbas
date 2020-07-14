@@ -3,6 +3,10 @@
 @section('header')
     @parent
 
+@stop
+
+@section("content")
+
     <div class="eachProduct row">
         <div class="col-lg-4 col-xs-12">
             <div class="pr_pics">
@@ -33,6 +37,7 @@
             </div>
         </div>
     </div>
+
 
     <script>
 
@@ -123,5 +128,4 @@
         }
 
     </script>
-
 @stop
