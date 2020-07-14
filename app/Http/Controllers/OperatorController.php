@@ -146,10 +146,11 @@ class OperatorController extends Controller {
 
     public function projects() {
 
-        $projects = DB::select("select p.*, g.name as grade from project p, grade g where p.grade_id = g.id order by p.id desc");
+        $projects = Project::orderBy("id", "desc")->get();
 
         foreach ($projects as $project) {
 
+            $project->grades = DB::select("select p.id, g.name from project_grade p, grade g where p.grade_id = g.id and p.project_id = " . $project->id);
             $tmpPic = ProjectPic::whereProjectId($project->id)->first();
 
             if($tmpPic == null || !file_exists(__DIR__ . '/../../../public/projectPic/' . $tmpPic->name))
@@ -230,6 +231,43 @@ class OperatorController extends Controller {
 
             try {
                 ProjectTag::destroy(makeValidInput($_POST["id"]));
+                echo "ok";
+                return;
+            }
+            catch (\Exception $x) {}
+        }
+
+        echo "nok";
+    }
+
+
+
+
+    public function addGradeProject() {
+
+        if(isset($_POST["id"]) && isset($_POST["gradeId"])) {
+
+            $tmp = new ProjectGrade();
+            $tmp->project_id = makeValidInput($_POST["id"]);
+            $tmp->grade_id = makeValidInput($_POST["gradeId"]);
+            try {
+                $tmp->save();
+                echo "ok";
+                return;
+            }
+            catch (\Exception $x) {}
+        }
+
+        echo "nok";
+
+    }
+
+    public function deleteGradeProject() {
+
+        if(isset($_POST["id"])) {
+
+            try {
+                ProjectGrade::destroy(makeValidInput($_POST["id"]));
                 echo "ok";
                 return;
             }

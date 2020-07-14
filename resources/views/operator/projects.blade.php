@@ -3,111 +3,6 @@
 @section('header')
     @parent
 
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        .column {
-            float: left;
-            width: 33.33%;
-            padding: 5px;
-            height: 300px;
-            max-height: 300px;
-
-        }
-
-        /* Clearfix (clear floats) */
-        .row::after {
-            content: "";
-            clear: both;
-            display: table;
-        }
-
-        .overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: #008CBA;
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            -webkit-transform: scale(0);
-            -ms-transform: scale(0);
-            transform: scale(0);
-            -webkit-transition: .3s ease;
-            transition: .3s ease;
-        }
-
-        .container:hover .overlay {
-            -webkit-transform: scale(1);
-            -ms-transform: scale(1);
-            transform: scale(1);
-        }
-
-        .text {
-            color: white;
-            font-size: 20px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            -webkit-transform: translate(-50%, -50%);
-            -ms-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-
-        .container {
-            position: relative;
-        }
-
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Sit on top */
-            padding-top: 100px; /* Location of the box */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-        }
-
-        /* Modal Content */
-        .modal-content {
-            position: relative;
-            background-color: #fefefe;
-            margin: auto;
-            padding: 0;
-            border: 1px solid #888;
-            width: 30%;
-            direction: rtl;
-            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-            -webkit-animation-name: animatetop;
-            -webkit-animation-duration: 0.4s;
-            animation-name: animatetop;
-            animation-duration: 0.4s
-        }
-
-        @-webkit-keyframes animatetop {
-            from {top:-300px; opacity:0}
-            to {top:0; opacity:1}
-        }
-
-        @keyframes animatetop {
-            from {top:-300px; opacity:0}
-            to {top:0; opacity:1}
-        }
-        .cke_chrome {
-            margin-top: 20px;
-            border: none !important;
-        }
-    </style>
-
     <style>
         th, td {
             text-align: right;
@@ -188,7 +83,19 @@
                                     <tr class="myTr tr_{{$itr->grade_id}}" id="tr_{{$itr->id}}">
                                         <td>{{$i}}</td>
                                         <td>{{$itr->title}}</td>
-                                        <td>{{$itr->grade}}</td>
+
+                                        <td>
+                                            @foreach($itr->grades as $grade)
+                                                <button id="grade_{{$grade->id}}" onclick="removeGrade('{{$grade->id}}')" style="margin: 4px" class="btn btn-info">
+                                                    <span>{{$grade->name}}</span>
+                                                    <span style="font-family: 'Glyphicons Halflings' !important;" class="glyphicon glyphicon-remove"></span>
+                                                </button>
+                                            @endforeach
+                                            <div style="margin-top: 10px">
+                                                <button onclick="showGrades('{{$itr->id}}')" class="btn btn-default">افزودن پایه تحصیلی جدید</button>
+                                            </div>
+                                        </td>
+
                                         <td>{{$itr->startReg}}</td>
                                         <td>{{$itr->endReg}}</td>
                                         <td><img width="100px" src="{{$itr->pic}}"></td>
@@ -303,77 +210,6 @@
         </form>
     </div>
 
-
-    <div id="myEditModal" class="modal">
-        <form action="{{route('editProject')}}" method="post" enctype="multipart/form-data">
-            {{ csrf_field() }}
-            <div class="modal-content" style="width: 75% !important;">
-
-                <input type="hidden" id="projectId" name="projectId">
-
-                <center>
-                    <h5 style="padding-right: 5%;">نام پروژه</h5>
-                    <input type="text" id="name" name="name" required maxlength="100">
-
-                    <h5 style="padding-right: 5%;">پایه تحصیلی</h5>
-                    <select id="gradeId" name="gradeId" required>
-                        @foreach($grades as $grade)
-                            <option value="{{$grade->id}}">{{$grade->name}}</option>
-                        @endforeach
-                    </select>
-
-                    <div>
-                        <span>تاریخ شروع امکان خرید</span>
-                        <input type="button" style="border: none; width: 30px; height: 30px; background: url({{ URL::asset('images/calendar-flat.png') }}) repeat 0 0; background-size: 100% 100%;" id="date_btn2">
-                        <br/>
-                        <input type="text" name="start_reg" id="date_input2" readonly>
-                        <script>
-                            Calendar.setup({
-                                inputField: "date_input2",
-                                button: "date_btn2",
-                                ifFormat: "%Y/%m/%d",
-                                dateType: "jalali"
-                            });
-                        </script>
-                    </div>
-
-                    <div>
-                        <span>تاریخ اتمام امکان خرید</span>
-                        <input type="button" style="border: none; width: 30px; height: 30px; background: url({{ URL::asset('images/calendar-flat.png') }}) repeat 0 0; background-size: 100% 100%;" id="end_date_btn2">
-                        <br/>
-                        <input type="text" name="end_reg" id="end_date_input2" readonly>
-                        <script>
-                            Calendar.setup({
-                                inputField: "end_date_input2",
-                                button: "end_date_btn2",
-                                ifFormat: "%Y/%m/%d",
-                                dateType: "jalali"
-                            });
-                        </script>
-                    </div>
-
-                    <h5>توضیح پروژه</h5>
-                    <textarea id="editor1" cols="80" name="description" required></textarea>
-
-                    <h5 style="padding-right: 5%;">هزینه پروژه</h5>
-                    <input type="number" id="price" name="price" required min="0">
-
-                    <img id="oldPic" width="200px">
-
-                    <h5 style="padding-right: 5%;">تصویر پروژه(اختیاری)</h5>
-                    <input type="file" name="file">
-
-                </center>
-
-                <div style="margin-top: 20px">
-                    <input type="submit" value="افزودن" class="btn green"  style="margin-right: 5%; margin-bottom: 3%">
-                    <input type="button" value="انصراف" class="btn green"  style="float: left; margin-bottom: 3%; margin-left: 5%;" onclick="document.getElementById('myEditModal').style.display = 'none'">
-                </div>
-            </div>
-        </form>
-    </div>
-
-
     <div id="myTagModal" class="modal">
 
         <div class="modal-content">
@@ -390,7 +226,30 @@
 
             <div style="margin-top: 20px">
                 <input onclick="addNewTag()" type="submit" value="افزودن تگ" class="btn green"  style="margin-right: 5%; margin-bottom: 3%">
-                <input type="button" value="انصراف" class="btn green"  style="float: left; margin-bottom: 3%; margin-left: 5%;" onclick="document.getElementById('myEditModal').style.display = 'none'">
+                <input type="button" value="انصراف" class="btn green"  style="float: left; margin-bottom: 3%; margin-left: 5%;" onclick="document.getElementById('myTagModal').style.display = 'none'">
+            </div>
+        </div>
+
+    </div>
+
+
+    <div id="myGradeModal" class="modal">
+
+        <div class="modal-content">
+
+            <center>
+
+                <h5 style="padding-right: 5%;">پایه های تحصیلی</h5>
+                <select id="gradeId">
+                    @foreach($grades as $grade)
+                        <option value="{{$grade->id}}">{{$grade->name}}</option>
+                    @endforeach
+                </select>
+            </center>
+
+            <div style="margin-top: 20px">
+                <input onclick="addNewGrade()" type="submit" value="افزودن پایه تحصیلی" class="btn green"  style="margin-right: 5%; margin-bottom: 3%">
+                <input type="button" value="انصراف" class="btn green"  style="float: left; margin-bottom: 3%; margin-left: 5%;" onclick="document.getElementById('myGradeModal').style.display = 'none'">
             </div>
         </div>
 
@@ -399,6 +258,26 @@
     <script>
 
         var itemId;
+
+        function removeGrade(id) {
+
+            $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                },
+                url: '{{route('deleteGradeProject')}}',
+                data: {
+                    id: id
+                },
+                success: function (res) {
+
+                    if(res === "ok")
+                        $("#grade_" + id).remove();
+
+                }
+            });
+        }
 
         function removeTag(id) {
 
@@ -425,6 +304,11 @@
             document.getElementById('myTagModal').style.display = 'block';
         }
 
+        function showGrades(id) {
+            itemId = id;
+            document.getElementById('myGradeModal').style.display = 'block';
+        }
+
         function addNewTag() {
 
             $.ajax({
@@ -436,6 +320,28 @@
                 data: {
                     id: itemId,
                     tagId: $("#tagId").val()
+                },
+                success: function (res) {
+
+                    if(res === "ok")
+                        document.location.reload();
+
+                }
+            });
+
+        }
+
+        function addNewGrade() {
+
+            $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                },
+                url: '{{route('addGradeProject')}}',
+                data: {
+                    id: itemId,
+                    gradeId: $("#gradeId").val()
                 },
                 success: function (res) {
 

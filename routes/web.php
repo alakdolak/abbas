@@ -190,6 +190,13 @@ Route::group(['middleware' => ['auth', 'operatorLevel']], function () {
 
 
 
+
+    Route::post('addGradeProject', ['as' => 'addGradeProject', 'uses' => 'OperatorController@addGradeProject']);
+
+    Route::post('deleteGradeProject', ['as' => 'deleteGradeProject', 'uses' => 'OperatorController@deleteGradeProject']);
+
+
+
     Route::post('addTagProject', ['as' => 'addTagProject', 'uses' => 'OperatorController@addTagProject']);
 
     Route::post('deleteTagProject', ['as' => 'deleteTagProject', 'uses' => 'OperatorController@deleteTagProject']);
