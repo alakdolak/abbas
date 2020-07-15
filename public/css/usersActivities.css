@@ -43,8 +43,7 @@ body {
 }
 
 .mainDivContainerProfilePage {
-    max-width: 1188px;
-    padding: 0 24px;
+    margin: 10px 12%;
 }
 
 .circleBase {

@@ -13,8 +13,8 @@
     <div id="PAGE">
 
         <div class="userProfilePageCoverImg"></div>
-        <center class="mainBodyUserProfile">
-            <div class="mainDivContainerProfilePage">
+        <div class="mainBodyUserProfile">
+            <div class="mainDivContainerProfilePage row">
                 <div class="userPageBodyTopBar">
                     <div class="circleBase profilePicUserProfile"></div>
                     <div class="userProfileInfo">
@@ -178,7 +178,7 @@
 
                 </div>
             </div>
-        </center>
+        </div>
 
         <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
 
