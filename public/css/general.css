@@ -27,3 +27,11 @@ body{
     font-weight: 700;
     color: #cecece;
 }
+
+/*the icones*/
+.coinIcon {
+    background-image: url(../images/coin.png);
+}
+.starIcon {
+    background-image: url(../images/star.png);
+}

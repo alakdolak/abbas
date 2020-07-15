@@ -119,12 +119,6 @@
     font-weight: 600;
     color: #404040 !important;
 }
-.coinIcon {
-    background-image: url(../images/coin.png);
-}
-.starIcon {
-    background-image: url(../images/star.png);
-}
 .profileLogOIBox {
     display: flex;
     justify-content: space-around;
