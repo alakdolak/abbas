@@ -296,17 +296,6 @@
                             </a>
 
                             <ul class="sub-menu" style="display: none;">
-{{--                                <li class="nav-item  ">--}}
-{{--                                    <a href="{{route('productReport')}}" class="nav-link">--}}
-{{--                                        <span class="title">محصولات</span>--}}
-{{--                                    </a>--}}
-{{--                                </li>--}}
-
-{{--                                <li class="nav-item  ">--}}
-{{--                                    <a href="{{route('most')}}" class="nav-link">--}}
-{{--                                        <span class="title">پر طرفدار های ماه</span>--}}
-{{--                                    </a>--}}
-{{--                                </li>--}}
 
                                 <li class="nav-item  ">
                                     <a href="{{route('usersReport')}}" class="nav-link">
@@ -314,47 +303,26 @@
                                     </a>
                                 </li>
 
+                                <li class="nav-item  ">
+                                    <a href="{{route('unDoneProjectsReport')}}" class="nav-link">
+                                        <span class="title">پروژه های ناتمام</span>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item  ">
+                                    <a href="{{route('productsReport')}}" class="nav-link">
+                                        <span class="title">رصد بازار خرید و فروش</span>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item  ">
+                                    <a href="{{route('productProjectReport')}}" class="nav-link">
+                                        <span class="title">پروژه/کالا/خدمت گزارش</span>
+                                    </a>
+                                </li>
+
                             </ul>
                         </li>
-
-{{--                        <li class="nav-item">--}}
-{{--                            <a href="javascript:;" class="nav-link nav-toggle">--}}
-{{--                                <i class="icon-basket"></i>--}}
-{{--                                <span class="title">مدیریت سفارشات</span>--}}
-{{--                                <span class="arrow open"></span>--}}
-{{--                            </a>--}}
-
-{{--                            <ul class="sub-menu" style="display: none;">--}}
-
-{{--                                <li class="nav-item  ">--}}
-{{--                                    <a href="{{route('rejectedOrders')}}" class="nav-link">--}}
-{{--                                        <span class="title">سفارشات رد شده</span>--}}
-{{--                                    </a>--}}
-{{--                                </li>--}}
-
-{{--                                <li class="nav-item  ">--}}
-{{--                                    <a href="{{route('unConfirmedOrders')}}" class="nav-link">--}}
-{{--                                        <span class="title">سفارشات جدید</span>--}}
-{{--                                    </a>--}}
-{{--                                </li>--}}
-
-{{--                                <li class="nav-item">--}}
-{{--                                    <a href="{{route('confirmedOrders')}}" class="nav-link">--}}
-{{--                                        <span class="title">سفارشات تایید شده</span>--}}
-{{--                                    </a>--}}
-{{--                                </li>--}}
-
-{{--                            </ul>--}}
-
-{{--                        </li>--}}
-
-{{--                        <li class="nav-item  ">--}}
-{{--                            <a href="{{route('editProduct')}}" class="nav-link nav-toggle">--}}
-{{--                                <i class="icon-diamond"></i>--}}
-{{--                                <span class="title">ویرایش کالا</span>--}}
-{{--                                <span class="arrow"></span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
 
                     </ul>
 

@@ -113,15 +113,15 @@
 
     <div class="eachProduct row">
         <div class="pr_descript col-lg-7 col-xs-12">
-            <div class="pr_descriptRow pr_title">پروژه ی کیف دستی</div>
-            <div class="pr_descriptRow pr_salesman">فروشنده: آقای حاجی قاسمی</div>
+            <div class="pr_descriptRow pr_title">{{$product->name}}</div>
+            <div class="pr_descriptRow pr_salesman">فروشنده: {{$product->owner}}</div>
             <div class="pr_descriptRow pr_iconesBox">
                 <div class="pr_icons coinIcon"></div>
-                <div>قیمت: 300 سکه</div>
+                <div>قیمت: {{$product->price}} سکه</div>
             </div>
             <div class="pr_descriptRow pr_iconesBox">
                 <div class="pr_icons starIcon"></div>
-                <div>ستاره ی دریافتی: 20</div>
+                <div>ستاره ی دریافتی: {{$product->star}}</div>
             </div>
             <div class="pr_descriptRow">
                 <div class="pr_iconesBox">
@@ -129,21 +129,22 @@
                     <div>توضیحات:</div>
                 </div>
                 <div class="pr_description">
-                    <div>توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست.</div>
+                    <div>{!! $product->description !!}</div>
                 </div>
             </div>
         </div>
         <div class="col-lg-5 col-xs-12" style="padding-right: 0 !important;">
             <div class="pr_pics">
                 <div class="pr_otherPics">
-                    <div class="pr_eachOtherPics"></div>
-                    <div class="pr_eachOtherPics"></div>
-                    <div class="pr_eachOtherPics"></div>
-                    <div class="pr_eachOtherPics"></div>
+                    @foreach($product->pics as $pic)
+                        <div data-url="{{$pic}}" style="background-image: url('{{$pic}}'); background-size: contain; cursor:pointer;" class="pr_eachOtherPics"></div>
+                    @endforeach
                 </div>
-                <div class="pr_mainPic"></div>
+                <div style="background-image: url('{{$product->pics[0]}}'); background-size: contain;" id="pr_mainPic" class="pr_mainPic"></div>
             </div>
-            <div onclick="buy()" class="shopBtn">خرید محصول</div>
+            @if($canBuy)
+                <div onclick="buy()" class="shopBtn">خرید محصول</div>
+            @endif
             <div class="eachProduct row">
 
                 <div class="col-lg-4 col-xs-12">
@@ -156,15 +157,95 @@
                     </div>
             </div>
         </div>
-        <div class="pr_advertiseBox col-lg-12">
-            <div class="pr_iconesBox">
-                <div class="pr_icons coinIcon"></div>
-                <div>تبلیغات:</div>
+
+        @if(count($product->attach) > 0)
+
+            <div class="pr_advertiseBox col-lg-12">
+                <div class="pr_iconesBox">
+                    <div class="pr_icons coinIcon"></div>
+                    <div>فایل های آموزشی:</div>
+                </div>
+                <div class="pr_advertise row">
+
+                    @foreach($product->attach as $pic)
+                        @if($pic["type"] == "png" || $pic["type"] == "jpg" || $pic["type"] == "gif" || $pic["type"] == "bmp" || $pic["type"] == "jpeg")
+                            <center class="col-xs-12">
+                                <img style="width: 250px; margin: 10px; float: right" src="{{$pic["path"]}}">
+                            </center>
+                        @elseif($pic["type"] == "mp4")
+                            <center class="col-xs-12">
+                                <video width="320" height="240" controls>
+                                    <source src="{{$pic["path"]}}" type="video/mp4">
+                                    مرورگر شما از پخش ویدیو پشتیبانی نمی کند. لطفا مرورگر خود را تغییر دهید.
+                                </video>
+                            </center>
+                        @elseif($pic["type"] == "mp3")
+                            <center class="col-xs-12">
+                                <audio controls>
+                                    <source src="{{$pic["path"]}}" type="audio/mpeg">
+                                    مرورگر شما از پخش موزیک پشتیبانی نمی کند. لطفا مرورگر خود را تغییر دهید.
+                                </audio>
+                            </center>
+                        @elseif($pic["type"] == "pdf")
+                            <center class="col-xs-12">
+                                <embed src="{{$pic["path"]}}" width="800px" height="800px" />
+                            </center>
+                        @else
+                            <center class="col-xs-12">
+                                <a href="{{$pic["path"]}}" download>دانلود فایل</a>
+                            </center>
+                        @endif
+                    @endforeach
+
+                </div>
             </div>
-            <div class="pr_advertise">
-                <div>توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست. توضیحات: سید امیرعباس میرمحمدصادقی از اولیای خداست.</div>
+
+        @endif
+
+
+        @if(count($product->trailer) > 0)
+
+            <div class="pr_advertiseBox col-lg-12">
+                <div class="pr_iconesBox">
+                    <div class="pr_icons coinIcon"></div>
+                    <div>تبلیغات:</div>
+                </div>
+                <div class="pr_advertise row">
+
+                    @foreach($product->trailer as $pic)
+                        @if($pic["type"] == "png" || $pic["type"] == "jpg" || $pic["type"] == "gif" || $pic["type"] == "bmp" || $pic["type"] == "jpeg")
+                            <center class="col-xs-12">
+                                <img style="width: 250px; margin: 10px; float: right" src="{{$pic["path"]}}">
+                            </center>
+                        @elseif($pic["type"] == "mp4")
+                            <center class="col-xs-12">
+                                <video width="320" height="240" controls>
+                                    <source src="{{$pic["path"]}}" type="video/mp4">
+                                    مرورگر شما از پخش ویدیو پشتیبانی نمی کند. لطفا مرورگر خود را تغییر دهید.
+                                </video>
+                            </center>
+                        @elseif($pic["type"] == "mp3")
+                            <center class="col-xs-12">
+                                <audio controls>
+                                    <source src="{{$pic["path"]}}" type="audio/mpeg">
+                                    مرورگر شما از پخش موزیک پشتیبانی نمی کند. لطفا مرورگر خود را تغییر دهید.
+                                </audio>
+                            </center>
+                        @elseif($pic["type"] == "pdf")
+                            <center class="col-xs-12">
+                                <embed src="{{$pic["path"]}}" width="800px" height="800px" />
+                            </center>
+                        @else
+                            <center class="col-xs-12">
+                                <a href="{{$pic["path"]}}" download>دانلود فایل</a>
+                            </center>
+                        @endif
+                    @endforeach
+
+                </div>
             </div>
-        </div>
+
+        @endif
     </div>
 
 
@@ -211,6 +292,16 @@
                 }
             });
         }
+
+        $(document).ready(function () {
+
+            $(".pr_eachOtherPics").on("click", function () {
+
+                $("#pr_mainPic").css("background-image", "url('" + $(this).attr('data-url') + "')").css("background-size", "contain");
+
+            });
+
+        });
 
         function bookmark() {
 

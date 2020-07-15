@@ -241,7 +241,7 @@ class AdminController extends Controller {
 
         foreach ($users as $user) {
 
-            if(count($user) != 6)
+            if(count($user) != 5)
                 continue;
 
             if(User::whereNid($user[4])->count() > 0 || !_custom_check_national_code($user[4]))
@@ -338,6 +338,26 @@ class AdminController extends Controller {
             $err = "لطفا فایل اکسل مورد نیاز را آپلود نمایید";
 
         return view('registrationResult', ['err' => $err, 'gradeId' => $gradeId]);
+    }
+
+    public function toggleSuperStatusUser() {
+
+        if(isset($_POST["id"])) {
+
+            $user = User::whereId(makeValidInput($_POST["id"]));
+
+            if($user == null)
+                return;
+
+            if($user->super_active)
+                $user->super_active = false;
+            else
+                $user->super_active = true;
+
+            $user->save();
+            echo "ok";
+        }
+
     }
 
     public function toggleStatusUser() {
